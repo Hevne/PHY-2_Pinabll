@@ -41,6 +41,7 @@ public:
 	SDL_Texture* rick;
 	SDL_Texture* spritesheet;
 
+	p2List<Sprite> layer0;
 	p2List<Sprite> layer1;
 	p2List<Sprite> layer2;
 	p2List<Sprite> layer3;

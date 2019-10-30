@@ -50,6 +50,9 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
+	LOG("MOUSE X: %i", App->input->GetMouseX());
+	LOG("MOUSE Y: %i", App->input->GetMouseY());
+
 	DrawLayers();
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
@@ -197,6 +200,32 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 void ModuleSceneIntro::LoadSprites()
 {
+	//First Layer
+	layer0.add({ "tube",{1093,259,313,394 }, 1, 5 });
+	//Fences left
+	layer0.add({ "fence_front_left1",{231,67,18,17 }, 53, 305 });
+	layer0.add({ "fence_front_left2",{231,67,18,17 }, 71, 295 });
+	layer0.add({ "fence_front_left3",{231,67,18,17 }, 89, 286 });
+	//Plates left
+	//layer0.add({ "plate_front_left1",{232,103,17,17 }, 55, 306 });
+	layer0.add({ "plate_front_left1",{232,103,17,17 }, 73, 296 });
+	layer0.add({ "plate_front_left2",{232,103,17,17 }, 91, 287 });
+	//Plates right bottom
+	layer0.add({ "plate_front_right1",{206,101,13,20 }, 281, 295 });
+	layer0.add({ "plate_front_right2",{206,101,13,20 }, 297, 312 });
+	//Plates right up
+	layer0.add({ "plate_front__top_right1",{206,101,13,20 }, 281, 196 });
+	layer0.add({ "plate_front__top_right2",{206,101,13,20 }, 296, 212 });
+	//Plates right sided
+	layer0.add({ "plate_sided__top_right1",{207,64,5,22 }, 301, 97 });
+	layer0.add({ "plate_sided__top_right2",{207,64,5,22 }, 302, 116 });
+	layer0.add({ "plate_sided__top_right3",{207,64,5,22 }, 303, 136 });
+	
+
+	
+	//layer0.add({ "fence1",{231,67,18,17 }, 1, 5 });
+	
+
 	//Front Layer
 	layer1.add({ "map_front",{-2,356,362,515 }, 1, 5 });
 
@@ -216,5 +245,11 @@ void ModuleSceneIntro::DrawLayers()
 	for (int i = 0; i < layer1.count(); i++)
 	{
 		App->renderer->Blit(spritesheet, layer1[i].pos_x, layer1[i].pos_y, &layer1[i].rect, 0.f);
+	}
+
+	//First layer
+	for (int i = 0; i < layer0.count(); i++)
+	{
+		App->renderer->Blit(spritesheet, layer0[i].pos_x, layer0[i].pos_y, &layer0[i].rect, 0.f);
 	}
 }
