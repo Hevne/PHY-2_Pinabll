@@ -220,6 +220,8 @@ void ModuleSceneIntro::LoadSprites()
 	layer0.add({ "plate_sided__top_right1",{207,64,5,22 }, 301, 97 });
 	layer0.add({ "plate_sided__top_right2",{207,64,5,22 }, 302, 116 });
 	layer0.add({ "plate_sided__top_right3",{207,64,5,22 }, 303, 136 });
+	//Car draw
+	layer0.add({ "plate_sided__top_right3",{383,507,171,91 }, 303, 136 });
 	
 
 	
