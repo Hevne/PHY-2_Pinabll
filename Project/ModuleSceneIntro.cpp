@@ -35,7 +35,14 @@ bool ModuleSceneIntro::Start()
 	LoadChains();
 
 	//COMMENTED: RECTANGLE SENSOR
-	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
+
+	sensor_top_1 = App->physics->CreateRectangleSensor(197, 47, 14, 12);
+	sensor_top_2 = App->physics->CreateRectangleSensor(224, 47, 14, 12);
+	sensor_top_3 = App->physics->CreateRectangleSensor(252, 47, 14, 12);
+	sensor_mid_1 = App->physics->CreateRectangleSensor(290, 233, 14, 12);
+	sensor_mid_2 = App->physics->CreateRectangleSensor(274, 217, 14, 12);
+	sensor_bot_1 = App->physics->CreateRectangleSensor(290, 333, 14, 12);
+	sensor_bot_2 = App->physics->CreateRectangleSensor(274, 317, 14, 12);
 
 	return ret;
 }
@@ -362,11 +369,11 @@ void ModuleSceneIntro::LoadChains()
 	};
 	App->physics->CreateChain(2, 0, shape_at_2left, 22);
 
-	int shape_at_top_right[36] = {
-	318, 191,
-	318, 213,
-	314, 219,
-	305, 220,
+	int shape_at_top_right[38] = {
+	311, 268,
+	311, 243,
+	308, 230,
+	297, 215,
 	283, 199,
 	284, 188,
 	301, 170,
@@ -376,11 +383,12 @@ void ModuleSceneIntro::LoadChains()
 	285, 81,
 	263, 79,
 	262, 40,
-	264, 30,
-	281, 31,
-	295, 40,
-	305, 51,
-	313, 64
+	264, 33,
+	281, 35,
+	292, 40,
+	303, 50,
+	311, 65,
+	321, 273
 	};
 	App->physics->CreateChain(2, 0, shape_at_top_right, 36);
 

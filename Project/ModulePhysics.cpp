@@ -66,6 +66,7 @@ update_status ModulePhysics::PreUpdate()
 	{
 		if(c->GetFixtureA()->IsSensor() && c->IsTouching())
 		{
+			LOG("AAAAAAAAAAAAAAA");
 			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			PhysBody* pb2 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			if(pb1 && pb2 && pb1->listener)

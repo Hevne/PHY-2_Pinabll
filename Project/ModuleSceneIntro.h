@@ -36,7 +36,13 @@ public:
 	SDL_Rect ball;
 
 
-	PhysBody* sensor;
+	PhysBody* sensor_top_1;
+	PhysBody* sensor_top_2;
+	PhysBody* sensor_top_3;
+	PhysBody* sensor_mid_1;
+	PhysBody* sensor_mid_2;
+	PhysBody* sensor_bot_1;
+	PhysBody* sensor_bot_2;
 	bool sensed;
 
 	SDL_Texture* circle;
