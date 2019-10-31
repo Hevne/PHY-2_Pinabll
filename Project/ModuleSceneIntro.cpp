@@ -111,8 +111,18 @@ update_status ModuleSceneIntro::Update()
 			0, 75,
 			30, 62
 		};
+		int mapchain[14] = {
+		221, 435,
+		250, 362,
+		259, 360,
+		265, 365,
+		265, 417,
+		233, 437,
+		221, 435
+		};
 		//COMMENTED: CREATE CHAIN
 		//ricks.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head, 64));
+		triangle.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), mapchain, 64));
 	}
 
 	// Prepare for raycast ------------------------------------------------------
