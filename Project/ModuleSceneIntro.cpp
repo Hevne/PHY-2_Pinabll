@@ -65,7 +65,7 @@ update_status ModuleSceneIntro::Update()
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 		//COMMENTED: CREATE BALL
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 8,true));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7,true));
 		circles.getLast()->data->listener = this;
 	}
 
@@ -266,6 +266,36 @@ void ModuleSceneIntro::DrawLayers()
 
 void ModuleSceneIntro::LoadChains()
 {
+	int bumper_right[12] = {
+	184, 487,
+	182, 492,
+	188, 497,
+	235, 480,
+	240, 472,
+	232, 464
+	};
+	App->physics->CreateChain(1, 0, bumper_right, 12);
+
+	int bumper_left[12] = {
+	105, 470,
+	106, 477,
+	153, 496,
+	161, 494,
+	159, 487,
+	115, 465
+	};
+	App->physics->CreateChain(1, 0, bumper_left, 12);
+
+	int bumper_top[12] = {
+	264, 282,
+	266, 290,
+	273, 290,
+	311, 265,
+	309, 257,
+	300, 255
+	};
+	App->physics->CreateChain(1, 0, bumper_top, 12);
+
 	int triangle_shape[16] = {
 	267, 421,
 	237, 440,
@@ -363,6 +393,7 @@ void ModuleSceneIntro::LoadChains()
 	234, 45
 	};
 	App->physics->CreateChain(2, -1, shape_at_top, 12);
+	App->physics->CreateChain(-28, -1, shape_at_top, 12);
 
 	int shape_at_top_left[20] = {
 	182, 80,
@@ -422,6 +453,8 @@ void ModuleSceneIntro::LoadChains()
 	353, 520
 	};
 	App->physics->CreateChain(0, 0, borders, 82);
+
+
 
 	App->physics->CreateCircle(217, 198, 25, false);
 	App->physics->CreateCircle(183, 138, 25, false);
