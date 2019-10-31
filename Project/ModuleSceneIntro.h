@@ -33,13 +33,7 @@ public:
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
-	p2List<PhysBody*> triangle;
-	p2List<PhysBody*> shape_right;
-	p2List<PhysBody*> shape_right2;
-	p2List<PhysBody*> shape_top_right;
-	p2List<PhysBody*> shape_top;
-	p2List<PhysBody*> shape_top_left;
-	p2List<PhysBody*> shape_borders;
+	SDL_Rect ball;
 
 
 	PhysBody* sensor;

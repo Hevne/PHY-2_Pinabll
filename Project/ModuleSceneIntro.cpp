@@ -65,8 +65,8 @@ update_status ModuleSceneIntro::Update()
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 		//COMMENTED: CREATE BALL
-		//circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25));
-		//circles.getLast()->data->listener = this;
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 8,true));
+		circles.getLast()->data->listener = this;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
@@ -130,12 +130,12 @@ update_status ModuleSceneIntro::Update()
 	// All draw functions ------------------------------------------------------
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
-	while(c != NULL)
+	while (c != NULL)
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		if(c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
-			App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
+		//if(c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
+		App->renderer->Blit(circle, x-4, y-3, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
@@ -155,13 +155,13 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 
-	c = triangle.getFirst();
+	c= ricks.getFirst();
 
 	while(c != NULL)
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		//App->renderer->Blit(spritesheet, x, y, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
@@ -276,7 +276,18 @@ void ModuleSceneIntro::LoadChains()
 	267, 369,
 	267, 396
 	};
-	triangle.add(App->physics->CreateChain(1, 0, triangle_shape, 16));
+	App->physics->CreateChain(1, 0, triangle_shape, 16);
+
+	int triangle_shape_left[14] = {
+	78, 368,
+	83, 362,
+	91, 363,
+	118, 431,
+	115, 440,
+	107, 441,
+	76, 421
+	};
+	App->physics->CreateChain(2, 0, triangle_shape_left, 14);
 
 	int shape_at_right[16] = {
 	235, 461,
@@ -288,7 +299,7 @@ void ModuleSceneIntro::LoadChains()
 	284, 352,
 	287, 431
 	};
-	shape_right.add(App->physics->CreateChain(2, 0, shape_at_right, 16));
+	App->physics->CreateChain(2, 0, shape_at_right, 16);
 
 	int shape_at_2right[24] = {
 	238, 508,
@@ -304,7 +315,22 @@ void ModuleSceneIntro::LoadChains()
 	323, 276,
 	332, 507
 	};
-	shape_right2.add(App->physics->CreateChain(2, 0, shape_at_2right, 24));
+	App->physics->CreateChain(2, 0, shape_at_2right, 24);
+
+	int shape_at_2left[22] = {
+	44, 352,
+	50, 347,
+	58, 349,
+	60, 359,
+	57, 430,
+	62, 436,
+	108, 461,
+	101, 475,
+	52, 447,
+	43, 438,
+	41, 427
+	};
+	App->physics->CreateChain(2, 0, shape_at_2left, 22);
 
 	int shape_at_top_right[36] = {
 	318, 191,
@@ -326,7 +352,7 @@ void ModuleSceneIntro::LoadChains()
 	305, 51,
 	313, 64
 	};
-	shape_top_right.add(App->physics->CreateChain(2, 0, shape_at_top_right, 36));
+	App->physics->CreateChain(2, 0, shape_at_top_right, 36);
 
 	int shape_at_top[12] = {
 	234, 68,
@@ -336,7 +362,7 @@ void ModuleSceneIntro::LoadChains()
 	239, 42,
 	234, 45
 	};
-	shape_top.add(App->physics->CreateChain(2, -1, shape_at_top, 12));
+	App->physics->CreateChain(2, -1, shape_at_top, 12);
 
 	int shape_at_top_left[20] = {
 	182, 80,
@@ -350,7 +376,7 @@ void ModuleSceneIntro::LoadChains()
 	157, 69,
 	165, 76
 	};
-	shape_top_left.add(App->physics->CreateChain(2, -1, shape_at_top_left, 20));
+	App->physics->CreateChain(2, -1, shape_at_top_left, 20);
 
 	int borders[82] = {
 	353, 500,
@@ -395,7 +421,11 @@ void ModuleSceneIntro::LoadChains()
 	405, 520,
 	353, 520
 	};
-	shape_borders.add(App->physics->CreateChain(0, 0, borders, 82));
+	App->physics->CreateChain(0, 0, borders, 82);
+
+	App->physics->CreateCircle(217, 198, 25, false);
+	App->physics->CreateCircle(183, 138, 25, false);
+	App->physics->CreateCircle(257, 121, 25, false);
 
 
 }
