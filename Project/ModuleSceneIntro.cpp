@@ -77,7 +77,7 @@ update_status ModuleSceneIntro::Update()
 	if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
 	{
 		// Pivot 0, 0
-		int rick_head[64] = {
+		/*int rick_head[64] = {
 			14, 36,
 			42, 40,
 			40, 0,
@@ -110,19 +110,20 @@ update_status ModuleSceneIntro::Update()
 			29, 90,
 			0, 75,
 			30, 62
-		};
-		int mapchain[14] = {
-		221, 435,
-		250, 362,
-		259, 360,
-		265, 365,
-		265, 417,
-		233, 437,
-		221, 435
+		};*/
+		int mapchain[16] = {
+		240, 390,
+		251, 366,
+		260, 363,
+		266, 370,
+		266, 419,
+		236, 439,
+		225, 437,
+		225, 426
 		};
 		//COMMENTED: CREATE CHAIN
 		//ricks.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head, 64));
-		triangle.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), mapchain, 64));
+		triangle.add(App->physics->CreateChain(40, 30, mapchain, 16));
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -162,13 +163,13 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 
-	c = ricks.getFirst();
+	c = triangle.getFirst();
 
 	while(c != NULL)
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(spritesheet, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
