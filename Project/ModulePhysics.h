@@ -47,6 +47,8 @@ public:
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, int* points, int size);
 
+
+	b2RevoluteJoint* CreateRevolutionJoint(b2Body* bodyA, b2Body* bodyB, const b2Vec2& anchor, float32 lowerAngle, float32 upperAngle, float32 maxMotorTorque, float32 motorSpeed);
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
 

@@ -193,7 +193,18 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
 
 	return pbody;
 }
-
+b2RevoluteJoint* ModulePhysics::CreateRevolutionJoint(b2Body* bodyA, b2Body* bodyB, const b2Vec2& anchor, float32 lowerAngle, float32 upperAngle, float32 maxMotorTorque, float32 motorSpeed)
+{
+	b2RevoluteJointDef jointDef;
+	jointDef.Initialize(bodyA, bodyB, bodyA->GetWorldCenter());
+	jointDef.lowerAngle = lowerAngle * b2_pi;
+	jointDef.upperAngle = upperAngle * b2_pi;
+	jointDef.enableLimit = true;
+	jointDef.maxMotorTorque = maxMotorTorque;
+	jointDef.motorSpeed = motorSpeed;
+	jointDef.enableMotor = true;
+	return (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+}
 // 
 update_status ModulePhysics::PostUpdate()
 {
