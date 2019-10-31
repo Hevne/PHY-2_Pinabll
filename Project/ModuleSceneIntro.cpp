@@ -32,6 +32,7 @@ bool ModuleSceneIntro::Start()
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
 	LoadSprites();
+	LoadChains();
 
 	//COMMENTED: RECTANGLE SENSOR
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
@@ -111,19 +112,10 @@ update_status ModuleSceneIntro::Update()
 			0, 75,
 			30, 62
 		};*/
-		int mapchain[16] = {
-		240, 390,
-		251, 366,
-		260, 363,
-		266, 370,
-		266, 419,
-		236, 439,
-		225, 437,
-		225, 426
-		};
+		
 		//COMMENTED: CREATE CHAIN
 		//ricks.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head, 64));
-		triangle.add(App->physics->CreateChain(40, 30, mapchain, 16));
+		
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -169,7 +161,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		App->renderer->Blit(spritesheet, x, y, NULL, 1.0f, c->data->GetRotation());
+		//App->renderer->Blit(spritesheet, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
@@ -232,15 +224,13 @@ void ModuleSceneIntro::LoadSprites()
 	layer0.add({ "plate_sided__top_right2",{207,64,5,22 }, 302, 116 });
 	layer0.add({ "plate_sided__top_right3",{207,64,5,22 }, 303, 136 });
 	//Car draw
-	layer0.add({ "plate_sided__top_right3",{383,507,171,91 }, 303, 136 });
-	
-
-	
-	//layer0.add({ "fence1",{231,67,18,17 }, 1, 5 });
-	
+	layer0.add({ "plate_sided__top_right3",{383,507,171,91 }, 385, 159 });
 
 	//Front Layer
 	layer1.add({ "map_front",{-2,356,362,515 }, 1, 5 });
+
+	//Medium layer
+	layer2.add({ "propulsor" , { 320,3,26,121 }, 328, 400 });
 
 	//Back Layer
 	layer3.add({ "map_back",{-1,884,578,521 }, 0, -15 });
@@ -254,6 +244,13 @@ void ModuleSceneIntro::DrawLayers()
 		App->renderer->Blit(spritesheet, layer3[i].pos_x, layer3[i].pos_y, &layer3[i].rect, 0.f);
 	}
 
+	//Mid Layer
+	for (int i = 0; i < layer2.count(); i++)
+	{
+		App->renderer->Blit(spritesheet, layer2[i].pos_x, layer2[i].pos_y, &layer2[i].rect, 0.f);
+	}
+
+
 	//Front Layer
 	for (int i = 0; i < layer1.count(); i++)
 	{
@@ -266,3 +263,141 @@ void ModuleSceneIntro::DrawLayers()
 		App->renderer->Blit(spritesheet, layer0[i].pos_x, layer0[i].pos_y, &layer0[i].rect, 0.f);
 	}
 }
+
+void ModuleSceneIntro::LoadChains()
+{
+	int triangle_shape[16] = {
+	267, 421,
+	237, 440,
+	228, 440,
+	224, 432,
+	252, 364,
+	261, 363,
+	267, 369,
+	267, 396
+	};
+	triangle.add(App->physics->CreateChain(1, 0, triangle_shape, 16));
+
+	int shape_at_right[16] = {
+	235, 461,
+	244, 475,
+	290, 449,
+	302, 437,
+	300, 352,
+	291, 346,
+	284, 352,
+	287, 431
+	};
+	shape_right.add(App->physics->CreateChain(2, 0, shape_at_right, 16));
+
+	int shape_at_2right[24] = {
+	238, 508,
+	237, 499,
+	305, 462,
+	314, 452,
+	321, 441,
+	317, 333,
+	284, 296,
+	283, 285,
+	309, 270,
+	319, 269,
+	323, 276,
+	332, 507
+	};
+	shape_right2.add(App->physics->CreateChain(2, 0, shape_at_2right, 24));
+
+	int shape_at_top_right[36] = {
+	318, 191,
+	318, 213,
+	314, 219,
+	305, 220,
+	283, 199,
+	284, 188,
+	301, 170,
+	307, 158,
+	307, 102,
+	296, 88,
+	285, 81,
+	263, 79,
+	262, 40,
+	264, 30,
+	281, 31,
+	295, 40,
+	305, 51,
+	313, 64
+	};
+	shape_top_right.add(App->physics->CreateChain(2, 0, shape_at_top_right, 36));
+
+	int shape_at_top[12] = {
+	234, 68,
+	239, 72,
+	244, 68,
+	244, 46,
+	239, 42,
+	234, 45
+	};
+	shape_top.add(App->physics->CreateChain(2, -1, shape_at_top, 12));
+
+	int shape_at_top_left[20] = {
+	182, 80,
+	186, 74,
+	186, 33,
+	181, 30,
+	172, 30,
+	161, 36,
+	154, 45,
+	154, 58,
+	157, 69,
+	165, 76
+	};
+	shape_top_left.add(App->physics->CreateChain(2, -1, shape_at_top_left, 20));
+
+	int borders[82] = {
+	353, 500,
+	331, 64,
+	324, 48,
+	308, 30,
+	281, 17,
+	167, 17,
+	148, 26,
+	135, 40,
+	134, 59,
+	144, 74,
+	144, 85,
+	135, 98,
+	133, 178,
+	137, 190,
+	146, 203,
+	163, 216,
+	173, 228,
+	184, 247,
+	187, 272,
+	181, 296,
+	176, 304,
+	166, 308,
+	154, 304,
+	142, 291,
+	122, 255,
+	103, 260,
+	108, 273,
+	102, 282,
+	47, 309,
+	50, 316,
+	26, 349,
+	22, 435,
+	25, 446,
+	35, 459,
+	105, 498,
+	105, 520,
+	0, 520,
+	0, -1,
+	405, -1,
+	405, 520,
+	353, 520
+	};
+	shape_borders.add(App->physics->CreateChain(0, 0, borders, 82));
+
+
+}
+
+
