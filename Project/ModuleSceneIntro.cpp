@@ -467,7 +467,7 @@ void ModuleSceneIntro::LoadChains()
 	App->physics->CreateCircle(217, 198, 25, false);
 	App->physics->CreateCircle(183, 138, 25, false);
 	App->physics->CreateCircle(257, 121, 25, false);
-	App->physics->CreateRectangle(100, 100,26, 121);
+	App->physics->CreateRectangle(340, 468,20, 121);
 
 
 }
