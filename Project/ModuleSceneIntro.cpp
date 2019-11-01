@@ -50,7 +50,10 @@ bool ModuleSceneIntro::Start()
 	circle_sensor_2= App->physics->CreateCircleSensor(183, 138, 26, false);
 	circle_sensor_3= App->physics->CreateCircleSensor(257, 121, 26, false);
 
-	plunger = App->physics->CreateRectangle(340, 468, 20, 121);
+	plunger = App->physics->CreateRectangle(344, 468, 26, 121,false);
+	boxes.add(plunger);
+	plunger_x = 344;
+	plunger_y = 468;
 	
 
 	return ret;
@@ -86,16 +89,29 @@ update_status ModuleSceneIntro::Update()
 	}
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		b2Vec2 plunger_current_position = { 340,468 };
-		plunger_current_position.y += 2;
-		plunger->body->SetTransform(plunger_current_position, 0);
+		if(plunger_y<530)
+		plunger_y += 1;
+		plunger_x += 0.7;
+
+		plunger->body->SetTransform({ PIXEL_TO_METERS(plunger_x), PIXEL_TO_METERS(plunger_y) }, NULL);
+	}
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	{
+		plunger_y = 468;
+		plunger_x = 344;
+		p2List_item<PhysBody*>* c = circles.getFirst();
+		c->data->body->ApplyForce({ 0,-20 }, { c->data->body->GetLocalCenter() }, true);
+		plunger->body->SetTransform({ PIXEL_TO_METERS(plunger_x), PIXEL_TO_METERS(plunger_y) }, NULL);
+		//TODO eudald: Change box and circle blitting for every single one. SENSOR to respawn ball, life counter, polish code
 		
+		//c->data->body->ApplyLinearImpulse({ 0,100 }, { c->data->body->GetLocalCenter() }, true);
+	
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
 		//COMMENTED: CREATE BOX
-		//boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
+		//boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 26, 121));
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -211,9 +227,7 @@ void ModuleSceneIntro::LoadSprites()
 	//Front Layer
 	layer1.add({ "map_front",{-2,356,362,515 }, 1, 5 });
 
-	//Medium layer
-	layer2.add({ "propulsor" , { 320,3,26,121 }, 328, 400 });
-
+	
 	//Back Layer
 	layer3.add({ "map_back",{-1,884,578,521 }, 0, -15 });
 
@@ -321,16 +335,16 @@ void ModuleSceneIntro::LoadChains()
 	int shape_at_2right[24] = {
 	238, 508,
 	237, 499,
-	305, 462,
+	305, 461,
 	314, 452,
 	321, 441,
-	317, 333,
+	316, 329,
 	284, 296,
-	283, 285,
-	309, 270,
-	319, 269,
-	323, 276,
-	332, 507
+	282, 284,
+	309, 268,
+	316, 268,
+	321, 274,
+	321, 510
 	};
 	App->physics->CreateChain(2, 0, shape_at_2right, 24);
 
@@ -398,8 +412,7 @@ void ModuleSceneIntro::LoadChains()
 	App->physics->CreateChain(2, -1, shape_at_top_left, 20);
 
 	int borders[82] = {
-	353, 500,
-	331, 64,
+	329, 68,
 	324, 48,
 	308, 30,
 	281, 17,
@@ -438,10 +451,10 @@ void ModuleSceneIntro::LoadChains()
 	0, -1,
 	405, -1,
 	405, 520,
-	353, 520
+	360, 520,
+	333, 114
 	};
 	App->physics->CreateChain(0, 0, borders, 82);
-
 
 
 	App->physics->CreateCircle(217, 198, 25, false);

@@ -101,7 +101,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool player_ball
 	shape.m_radius = PIXEL_TO_METERS(radius);
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	fixture.density = 1.0f;
+	fixture.density = 0.2f;
 
 	b->CreateFixture(&fixture);
 
@@ -113,10 +113,17 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool player_ball
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height,bool dynamic)
 {
 	b2BodyDef body;
-	body.type = b2_staticBody;
+	if (dynamic == true)
+	{
+		body.type = b2_dynamicBody;
+	}
+	else
+	{
+		body.type = b2_staticBody;
+	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);

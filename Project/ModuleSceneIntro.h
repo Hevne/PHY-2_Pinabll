@@ -65,6 +65,8 @@ public:
 	bool ray_on;
 	int score = 0;
 	p2SString current_score = { "000" };
+	int plunger_x;
+	int plunger_y;
 	const char* text_score;
 	bool inc_score = true;
 };
