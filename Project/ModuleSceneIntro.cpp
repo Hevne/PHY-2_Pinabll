@@ -6,6 +6,7 @@
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModuleFonts.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -31,11 +32,12 @@ bool ModuleSceneIntro::Start()
 	spritesheet = App->textures->Load("pinball/sprite_sheet.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
+	App->fonts->Load("fonts/score_font14h.png", "0123456789", 1, 11, 14, 10);
+	
 	LoadSprites();
 	LoadChains();
 
-	//COMMENTED: RECTANGLE SENSOR
-
+	//RECTANGLE SENSOR
 	sensor_top_1 = App->physics->CreateRectangleSensor(197, 47, 14, 12);
 	sensor_top_2 = App->physics->CreateRectangleSensor(224, 47, 14, 12);
 	sensor_top_3 = App->physics->CreateRectangleSensor(252, 47, 14, 12);
@@ -43,6 +45,13 @@ bool ModuleSceneIntro::Start()
 	sensor_mid_2 = App->physics->CreateRectangleSensor(274, 217, 14, 12);
 	sensor_bot_1 = App->physics->CreateRectangleSensor(290, 333, 14, 12);
 	sensor_bot_2 = App->physics->CreateRectangleSensor(274, 317, 14, 12);
+	//CIRCLE SENSOR
+	circle_sensor_1= App->physics->CreateCircleSensor(217, 198, 26, false);
+	circle_sensor_2= App->physics->CreateCircleSensor(183, 138, 26, false);
+	circle_sensor_3= App->physics->CreateCircleSensor(257, 121, 26, false);
+
+	plunger = App->physics->CreateRectangle(340, 468, 20, 121);
+	
 
 	return ret;
 }
@@ -75,54 +84,18 @@ update_status ModuleSceneIntro::Update()
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7,true));
 		circles.getLast()->data->listener = this;
 	}
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	{
+		b2Vec2 plunger_current_position = { 340,468 };
+		plunger_current_position.y += 2;
+		plunger->body->SetTransform(plunger_current_position, 0);
+		
+	}
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
 		//COMMENTED: CREATE BOX
 		//boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
-	{
-		// Pivot 0, 0
-		/*int rick_head[64] = {
-			14, 36,
-			42, 40,
-			40, 0,
-			75, 30,
-			88, 4,
-			94, 39,
-			111, 36,
-			104, 58,
-			107, 62,
-			117, 67,
-			109, 73,
-			110, 85,
-			106, 91,
-			109, 99,
-			103, 104,
-			100, 115,
-			106, 121,
-			103, 125,
-			98, 126,
-			95, 137,
-			83, 147,
-			67, 147,
-			53, 140,
-			46, 132,
-			34, 136,
-			38, 126,
-			23, 123,
-			30, 114,
-			10, 102,
-			29, 90,
-			0, 75,
-			30, 62
-		};*/
-		
-		//COMMENTED: CREATE CHAIN
-		//ricks.add(App->physics->CreateChain(App->input->GetMouseX(), App->input->GetMouseY(), rick_head, 64));
-		
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -141,6 +114,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
+		//Fill shapes with image
 		//if(c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
 		App->renderer->Blit(circle, x-4, y-3, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
@@ -192,10 +166,11 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	int x, y;
 
-	App->audio->PlayFx(bonus_fx);
+	//Audio effect
+	//App->audio->PlayFx(bonus_fx);
 
-	/*
-	if(bodyA)
+	
+	/*if(bodyA)
 	{
 		bodyA->GetPosition(x, y);
 		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
@@ -241,6 +216,7 @@ void ModuleSceneIntro::LoadSprites()
 
 	//Back Layer
 	layer3.add({ "map_back",{-1,884,578,521 }, 0, -15 });
+
 }
 
 void ModuleSceneIntro::DrawLayers()
@@ -269,6 +245,10 @@ void ModuleSceneIntro::DrawLayers()
 	{
 		App->renderer->Blit(spritesheet, layer0[i].pos_x, layer0[i].pos_y, &layer0[i].rect, 0.f);
 	}
+	
+	
+	text_score = current_score.GetString();
+	App->fonts->BlitText(426, 313, 1, text_score);
 }
 
 void ModuleSceneIntro::LoadChains()
@@ -467,9 +447,20 @@ void ModuleSceneIntro::LoadChains()
 	App->physics->CreateCircle(217, 198, 25, false);
 	App->physics->CreateCircle(183, 138, 25, false);
 	App->physics->CreateCircle(257, 121, 25, false);
-	App->physics->CreateRectangle(340, 468,20, 121);
+	//Plunger
+
+	
 
 
+}
+
+void ModuleSceneIntro::NewScore(int inc)
+{
+	if (score + inc < 900000000)
+	{
+		score += inc;
+	}
+	current_score = p2SString("%d", score);
 }
 
 

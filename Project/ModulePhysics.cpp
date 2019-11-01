@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 #include "ModulePhysics.h"
+#include "ModuleSceneIntro.h"
 #include "p2Point.h"
 #include "math.h"
 
@@ -66,14 +67,18 @@ update_status ModulePhysics::PreUpdate()
 	{
 		if(c->GetFixtureA()->IsSensor() && c->IsTouching())
 		{
-			LOG("AAAAAAAAAAAAAAA");
+			if (App->scene_intro->inc_score == true)
+			{
+				App->scene_intro->NewScore(10);
+				App->scene_intro->inc_score = false;
+			}
 			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			PhysBody* pb2 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			if(pb1 && pb2 && pb1->listener)
 				pb1->listener->OnCollision(pb1, pb2);
 		}
 	}
-
+	App->scene_intro->inc_score = true;
 	return UPDATE_CONTINUE;
 }
 
@@ -158,6 +163,39 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	pbody->height = height;
 
 	return pbody;
+}
+
+PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radius, bool player_ball)
+{
+	b2BodyDef body;
+	if (player_ball == true)
+	{
+		body.type = b2_dynamicBody;
+	}
+	else
+	{
+		body.type = b2_staticBody;
+	}
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2CircleShape shape;
+	shape.m_radius = PIXEL_TO_METERS(radius);
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+	fixture.density = 1.0f;
+	fixture.isSensor = true;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->SetUserData(pbody);
+	pbody->width = pbody->height = radius;
+
+	return pbody;
+	return nullptr;
 }
 
 PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)

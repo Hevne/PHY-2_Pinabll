@@ -28,6 +28,7 @@ public:
 	void LoadSprites();
 	void DrawLayers();
 	void LoadChains();
+	void NewScore(int inc);
 
 public:
 	p2List<PhysBody*> circles;
@@ -43,6 +44,10 @@ public:
 	PhysBody* sensor_mid_2;
 	PhysBody* sensor_bot_1;
 	PhysBody* sensor_bot_2;
+	PhysBody* circle_sensor_1;
+	PhysBody* circle_sensor_2;
+	PhysBody* circle_sensor_3;
+	PhysBody* plunger;
 	bool sensed;
 
 	SDL_Texture* circle;
@@ -58,4 +63,8 @@ public:
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
+	int score = 0;
+	p2SString current_score = { "000" };
+	const char* text_score;
+	bool inc_score = true;
 };
