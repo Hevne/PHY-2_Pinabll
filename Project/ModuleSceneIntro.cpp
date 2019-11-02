@@ -217,17 +217,6 @@ update_status ModuleSceneIntro::Update()
 	fVector normal(0.0f, 0.0f);
 
 	// All draw functions ------------------------------------------------------
-	p2List_item<PhysBody*>* c = circles.getFirst();
-
-	while (c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		//Fill shapes with image
-		App->renderer->Blit(circle, x-4, y-3, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
-	}
-
 
 		box_bumper_left->body->GetPosition();
 		App->renderer->Blit(spritesheet, 118-8, 460, &left_bumper_rect, 1.0f,box_bumper_left->GetRotation(),0,0);
