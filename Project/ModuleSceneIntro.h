@@ -59,6 +59,7 @@ public:
 	PhysBody* triangle_right = nullptr;
 
 	PhysBody* box_bumper = nullptr;
+	PhysBody* box_plunger = nullptr;
 
 	PhysBody* left_bumper_circle_joint = nullptr;
 	b2RevoluteJoint* left_bumper_joint = nullptr;

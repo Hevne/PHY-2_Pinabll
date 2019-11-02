@@ -50,8 +50,10 @@ bool ModuleSceneIntro::Start()
 	circle_sensor_2= App->physics->CreateCircleSensor(183, 138, 26, false);
 	circle_sensor_3= App->physics->CreateCircleSensor(257, 121, 26, false);
 
+	//PLUNGER Creation
 	plunger = App->physics->CreateRectangle(344, 468, 26, 121,false);
 	boxes.add(plunger);
+	plunger->body->SetActive(false);
 	plunger_x = 344;
 	plunger_y = 468;
 	
@@ -136,7 +138,7 @@ update_status ModuleSceneIntro::Update()
 		circles.add(ball);
 		circles.getLast()->data->listener = this;
 	}
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT && plunger->body->IsActive())
 	{
 		if(plunger_y<530)
 		plunger_y += 1;
@@ -144,27 +146,18 @@ update_status ModuleSceneIntro::Update()
 		plunger->body->SetTransform({ PIXEL_TO_METERS(plunger_x), PIXEL_TO_METERS(plunger_y) }, NULL);
 
 	}
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP && plunger->body->IsActive())
 	{
 		plunger_y = 468;
 		plunger_x = 344;
-		if(ball != nullptr && plunger->body->IsActive())
 		ball->body->ApplyForce({ 0,-80 }, { ball->body->GetLocalCenter() }, true);
 		plunger->body->SetActive(false);
 		plunger->body->SetTransform({ PIXEL_TO_METERS(plunger_x), PIXEL_TO_METERS(plunger_y) }, NULL);
 		ball->body->GetFixtureList()->SetRestitution(0.3f);
 
-		//TODO eudald: Change box and circle blitting for every single one. SENSOR to respawn ball, life counter, polish code
-		
-		//c->data->body->ApplyLinearImpulse({ 0,10 }, { c->data->body->GetLocalCenter() }, true);
-	
+		//TODO eudald:  SENSOR to respawn ball, life counter, polish code
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-	{
-		//COMMENTED: CREATE BOX
-		//boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 26, 121));
-	}
 
 	// Prepare for raycast ------------------------------------------------------
 	
@@ -183,7 +176,6 @@ update_status ModuleSceneIntro::Update()
 		int x, y;
 		c->data->GetPosition(x, y);
 		//Fill shapes with image
-		//if(c->data->Contains(App->input->GetMouseX(), App->input->GetMouseY()))
 		App->renderer->Blit(circle, x-4, y-3, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
@@ -192,29 +184,32 @@ update_status ModuleSceneIntro::Update()
 		box_bumper->body->GetPosition();
 		App->renderer->Blit(spritesheet, 118- 22, 475, &left_bumper_rect, 1.0f,box_bumper->GetRotation(),-20,10);
 
-	while(c != NULL)
+		
+	p2List_item<PhysBody*>* b = boxes.getFirst();
+	while(b != NULL)
 	{
 		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
+		b->data->GetPosition(x, y);
+		App->renderer->Blit(box, x, y, NULL, 1.0f, b->data->GetRotation());
+
 		if(ray_on)
 		{
-			int hit = c->data->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
+			int hit = b->data->RayCast(ray.x, ray.y, mouse.x, mouse.y, normal.x, normal.y);
 			if(hit >= 0)
 				ray_hit = hit;
 		}
-		c = c->next;
+		b = b->next;
 	}
 
-	c= ricks.getFirst();
+	//c= ricks.getFirst();
 
-	while(c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
-	}
+	//while(c != NULL)
+	//{
+	//	int x, y;
+	//	c->data->GetPosition(x, y);
+	//	App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
+	//	c = c->next;
+	//}
 
 	// ray -----------------
 	if(ray_on == true)
