@@ -30,7 +30,7 @@ bool ModuleSceneIntro::Start()
 
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
-	circle = App->textures->Load("pinball/wheel.png"); 
+	circle = App->textures->Load("pinball/wheel.png");
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	spritesheet = App->textures->Load("pinball/sprite_sheet.png");
@@ -44,7 +44,7 @@ bool ModuleSceneIntro::Start()
 	App->audio->PlayMusic("audio/music/loop.ogg");
 
 	App->fonts->Load("fonts/score_font14h.png", "0123456789", 1, 11, 14, 10);
-	
+
 	LoadSprites();
 	LoadChains();
 
@@ -68,7 +68,7 @@ bool ModuleSceneIntro::Start()
 	plunger->body->SetActive(false);
 	plunger_x = 344;
 	plunger_y = 468;
-	
+
 	// bumper left 105, 470
 	int posx1 = 118;
 	int posy1 = 475;
@@ -159,14 +159,14 @@ update_status ModuleSceneIntro::Update()
 	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) {
 		right_bumper_joint->SetMotorSpeed(50.f);
 		top_bumper_joint->SetMotorSpeed(50.f);
-		
+
 	}
 	if (left_bumper_joint->GetJointAngle() <= left_bumper_joint->GetLowerLimit()) {
 		left_bumper_joint->SetMotorSpeed(50.f);
-	}	
+	}
 	if (right_bumper_joint->GetJointAngle() >= right_bumper_joint->GetUpperLimit()) {
 		right_bumper_joint->SetMotorSpeed(-50.f);
-	}	
+	}
 	if (top_bumper_joint->GetJointAngle() >= top_bumper_joint->GetUpperLimit()) {
 		top_bumper_joint->SetMotorSpeed(-50.f);
 	}
@@ -208,7 +208,7 @@ update_status ModuleSceneIntro::Update()
 
 
 	// Prepare for raycast ------------------------------------------------------
-	
+
 	iPoint mouse;
 	mouse.x = App->input->GetMouseX();
 	mouse.y = App->input->GetMouseY();
@@ -217,7 +217,6 @@ update_status ModuleSceneIntro::Update()
 	fVector normal(0.0f, 0.0f);
 
 	// All draw functions ------------------------------------------------------
-<<<<<<< HEAD
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
 	while (c != NULL)
@@ -229,8 +228,6 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 
-=======
->>>>>>> de024702ea922d4630f85f1f6de23fe2cc5b3f4c
 
 		box_bumper_left->body->GetPosition();
 		App->renderer->Blit(spritesheet, 118-8, 460, &left_bumper_rect, 1.0f,box_bumper_left->GetRotation(),0,0);
@@ -238,13 +235,10 @@ update_status ModuleSceneIntro::Update()
 		box_bumper_right->body->GetPosition();
 		App->renderer->Blit(spritesheet,175, 460, &right_bumper_rect, 1.0f,box_bumper_right->GetRotation(),60,0);
 
-<<<<<<< HEAD
 		box_bumper_top->body->GetPosition();
 		App->renderer->Blit(spritesheet, 250, 250, &top_bumper_rect, 1.0f,box_bumper_top->GetRotation(),60,0);
 
-		
-=======
->>>>>>> de024702ea922d4630f85f1f6de23fe2cc5b3f4c
+
 	p2List_item<PhysBody*>* b = boxes.getFirst();
 	while(b != NULL)
 	{
@@ -353,7 +347,7 @@ void ModuleSceneIntro::LoadSprites()
 	//Front Layer
 	layer1.add({ "map_front",{-2,356,362,515 }, 1, 5 });
 
-	
+
 	//Back Layer
 	layer3.add({ "map_back",{-1,884,578,521 }, 0, -15 });
 
@@ -396,8 +390,8 @@ void ModuleSceneIntro::DrawLayers()
 	{
 		App->renderer->Blit(spritesheet, layer0[i].pos_x, layer0[i].pos_y, &layer0[i].rect, 0.f);
 	}
-	
-	
+
+
 	text_score = current_score.GetString();
 	App->fonts->BlitText(426, 313, 1, text_score);
 
@@ -415,7 +409,7 @@ void ModuleSceneIntro::LoadChains()
 	};
 	//right_bumper = App->physics->CreateChain(1, 0, bumper_right, 12);
 
-	
+
 	int bumper_left[12] = {
 	105, 470,
 	106, 477,
@@ -610,7 +604,7 @@ void ModuleSceneIntro::LoadChains()
 	App->physics->CreateCircle(257, 121, 25, false);
 	//Plunger
 
-	
+
 
 
 }
@@ -633,6 +627,3 @@ void ModuleSceneIntro::CreateBall()
 	circles.add(ball);
 	circles.getLast()->data->listener = this;
 }
-
-
-
