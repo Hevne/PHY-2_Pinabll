@@ -62,10 +62,12 @@ public:
 
 	PhysBody* box_bumper_left = nullptr;
 	PhysBody* box_bumper_right = nullptr;
+	PhysBody* box_bumper_top = nullptr;
 	PhysBody* box_plunger = nullptr;
 
 	b2RevoluteJoint* left_bumper_joint = nullptr;
 	b2RevoluteJoint* right_bumper_joint = nullptr;
+	b2RevoluteJoint* top_bumper_joint = nullptr;
 	
 	bool sensed;
 

@@ -24,8 +24,11 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	App->renderer->camera.x = App->renderer->camera.y = 0;
 	left_bumper_rect = { 582,134,62,20 };
+	right_bumper_rect = { 505,135,63,19 };
+
+
+	App->renderer->camera.x = App->renderer->camera.y = 0;
 	circle = App->textures->Load("pinball/wheel.png"); 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
@@ -62,24 +65,7 @@ bool ModuleSceneIntro::Start()
 	plunger_y = 468;
 	
 	// bumper left 105, 470
-	int posx = 118;
-	int posy = 475;
-	int dim = 20;
-	b2BodyDef b;
-	b.type = b2_staticBody;
-	b.position.Set(PIXEL_TO_METERS(posx), PIXEL_TO_METERS(posy));
-
-	b2Body* circle = App->physics->world->CreateBody(&b);
-
-	b2CircleShape shape1;
-	shape1.m_radius = PIXEL_TO_METERS(dim) * 0.5f;
-
-	b2FixtureDef fix;
-	fix.shape = &shape1;
-	circle->CreateFixture(&fix);	
-	
-
-	int posx1 = 230;
+	int posx1 = 118;
 	int posy1 = 475;
 	int dim1 = 20;
 	b2BodyDef b1;
@@ -88,21 +74,59 @@ bool ModuleSceneIntro::Start()
 
 	b2Body* circle1 = App->physics->world->CreateBody(&b1);
 
-	b2CircleShape shape2;
-	shape2.m_radius = PIXEL_TO_METERS(dim1) * 0.5f;
+	b2CircleShape shape1;
+	shape1.m_radius = PIXEL_TO_METERS(dim1) * 0.5f;
 
 	b2FixtureDef fix1;
-	fix1.shape = &shape2;
+	fix1.shape = &shape1;
 	circle1->CreateFixture(&fix1);
+
+
+	int posx2 = 230;
+	int posy2 = 475;
+	int dim2 = 20;
+	b2BodyDef b2;
+	b2.type = b2_staticBody;
+	b2.position.Set(PIXEL_TO_METERS(posx2), PIXEL_TO_METERS(posy2));
+
+	b2Body* circle2 = App->physics->world->CreateBody(&b2);
+
+	b2CircleShape shape2;
+	shape2.m_radius = PIXEL_TO_METERS(dim2) * 0.5f;
+
+	b2FixtureDef fix2;
+	fix2.shape = &shape2;
+	circle2->CreateFixture(&fix2);
+
+	int posx3 = 230;
+	int posy3 = 475;
+	int dim3 = 20;
+	b2BodyDef b3;
+	b3.type = b2_staticBody;
+	b3.position.Set(PIXEL_TO_METERS(posx3), PIXEL_TO_METERS(posy3));
+
+	b2Body* circle3 = App->physics->world->CreateBody(&b3);
+
+	b2CircleShape shape3;
+	shape3.m_radius = PIXEL_TO_METERS(dim3) * 0.5f;
+
+	b2FixtureDef fix3;
+	fix3.shape = &shape3;
+	circle3->CreateFixture(&fix3);
+
+	//Left Bumper
+	box_bumper_left = App->physics->CreateRectangle(posx1 + dim1, posy1, 60, 18, true);
+	left_bumper_joint = App->physics->CreateRevolutionJoint(circle1, box_bumper_left->body, circle1->GetWorldCenter(), -0.05f, 0.15f, 75.f, 50.f);
 
 	//184, 487
 	//Right Bumper
-	box_bumper_right = App->physics->CreateRectangle(posx1 - dim1-5 , posy1, 60, 18,true);
-	right_bumper_joint = App->physics->CreateRevolutionJoint(circle1, box_bumper_right->body, circle1->GetWorldCenter(), 0.2f, -0.15f, 75.f,-50);
+	box_bumper_right = App->physics->CreateRectangle(posx2 - dim2, posy2, 60, 18, true);
+	right_bumper_joint = App->physics->CreateRevolutionJoint(circle2, box_bumper_right->body, circle2->GetWorldCenter(),-0.15f, 0.05f, 75.f, -50.f);
 
-	//Left Bumper
-	box_bumper_left = App->physics->CreateRectangle(posx + dim, posy, 60, 18,true);
-	left_bumper_joint = App->physics->CreateRevolutionJoint(circle, box_bumper_left->body, circle->GetWorldCenter(), -0.05f, 0.15f, 75.f, 50);
+	//Top Bumper
+	//264, 282
+	box_bumper_top = App->physics->CreateRectangle(posx2 - dim2, posy2, 60, 18, true);
+	top_bumper_joint = App->physics->CreateRevolutionJoint(circle2, box_bumper_top->body, circle2->GetWorldCenter(),-0.15f, 0.05f, 75.f, -50.f);
 
 
 	return ret;
@@ -127,10 +151,14 @@ update_status ModuleSceneIntro::Update()
 	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) {
 		left_bumper_joint->SetMotorSpeed(-50.f);
 	}
+
+	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) {
+		right_bumper_joint->SetMotorSpeed(50.f);
+	}
 	if (left_bumper_joint->GetJointAngle() <= left_bumper_joint->GetLowerLimit()) {
 		left_bumper_joint->SetMotorSpeed(50.f);
 	}	
-	if (right_bumper_joint->GetJointAngle() <= right_bumper_joint->GetLowerLimit()) {
+	if (right_bumper_joint->GetJointAngle() >= right_bumper_joint->GetUpperLimit()) {
 		right_bumper_joint->SetMotorSpeed(-50.f);
 	}
 
@@ -192,13 +220,16 @@ update_status ModuleSceneIntro::Update()
 		int x, y;
 		c->data->GetPosition(x, y);
 		//Fill shapes with image
-		App->renderer->Blit(circle, x-4, y-3, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(circle, x, y-3, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
 
 		box_bumper_left->body->GetPosition();
 		App->renderer->Blit(spritesheet, 118-8, 460, &left_bumper_rect, 1.0f,box_bumper_left->GetRotation(),0,0);
+
+		box_bumper_right->body->GetPosition();
+		App->renderer->Blit(spritesheet,175, 460, &right_bumper_rect, 1.0f,box_bumper_right->GetRotation(),60,0);
 
 		
 	p2List_item<PhysBody*>* b = boxes.getFirst();
@@ -217,15 +248,6 @@ update_status ModuleSceneIntro::Update()
 		b = b->next;
 	}
 
-	//c= ricks.getFirst();
-
-	//while(c != NULL)
-	//{
-	//	int x, y;
-	//	c->data->GetPosition(x, y);
-	//	App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
-	//	c = c->next;
-	//}
 
 	// ray -----------------
 	if(ray_on == true)
@@ -374,8 +396,8 @@ void ModuleSceneIntro::LoadChains()
 	309, 257,
 	300, 255
 	};
-	top_bumper = App->physics->CreateChain(1, 0, bumper_top, 12);
-	top_bumper->body->GetFixtureList()->SetRestitution(1.0f);
+	//top_bumper = App->physics->CreateChain(1, 0, bumper_top, 12);
+	//top_bumper->body->GetFixtureList()->SetRestitution(1.0f);
 
 
 	int triangle_shape[16] = {
