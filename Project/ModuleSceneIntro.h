@@ -106,6 +106,7 @@ public:
 	int plunger_x;
 	int plunger_y;
 	
-
+	uint lifes = 4;
+	bool on_game = false;
 	bool respawn = false;
 };

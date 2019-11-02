@@ -180,6 +180,7 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN || respawn)
 	{
+		on_game = true;
 		App->audio->PlayFx(respawn_fx);
 		//COMMENTED: CREATE BALL
 		CreateBall();
@@ -294,7 +295,11 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyB == sensor_lost)
 	{
 		App->audio->PlayFx(lost_fx);
-		respawn = true;
+		lifes--;
+		if (lifes > 0)
+		{
+			respawn = true;
+		}
 	}
 
 	if (bodyB == circle_01 || bodyB == circle_02 || bodyB == circle_03) {
@@ -344,6 +349,13 @@ void ModuleSceneIntro::LoadSprites()
 	layer0.add({ "plate_sided__top_right3",{383,507,171,91 }, 385, 159 });
 
 	//Front Layer
+	layer1.add({ "light_top_1", { 168,97,29,28 }, 183, 33 });
+	layer1.add({ "light_top_2", { 168,97,29,28 }, 210, 33 });
+	layer1.add({ "light_top_3", { 168,97,29,28 }, 237, 33 });
+	layer1.add({ "light_mid_1", { 168,97,29,28 }, 276, 219 });
+	layer1.add({ "light_mid_2", { 168,97,29,28 }, 261, 203 });
+	layer1.add({ "light_bot_1", { 168,97,29,28 }, 276, 320 });
+	layer1.add({ "light_top_2", { 168,97,29,28 }, 261, 304 });
 	layer1.add({ "map_front",{-2,356,362,515 }, 1, 5 });
 
 
@@ -381,8 +393,19 @@ void ModuleSceneIntro::DrawLayers()
 	//Front Layer
 	for (int i = 0; i < layer1.count(); i++)
 	{
-		App->renderer->Blit(spritesheet, layer1[i].pos_x, layer1[i].pos_y, &layer1[i].rect, 0.f);
+		if (!on_game)
+		{
+			App->renderer->Blit(spritesheet, layer1[i].pos_x, layer1[i].pos_y, &layer1[i].rect, 0.f);
+		}
+		else if (on_game)
+		{
+			if (layer1[i].name == "map_front")
+			{
+				App->renderer->Blit(spritesheet, layer1[i].pos_x, layer1[i].pos_y, &layer1[i].rect, 0.f);
+			}
+		}
 	}
+	
 
 	//First layer
 	for (int i = 0; i < layer0.count(); i++)
