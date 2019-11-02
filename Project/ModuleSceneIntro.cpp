@@ -599,9 +599,12 @@ void ModuleSceneIntro::LoadChains()
 	App->physics->CreateChain(0, 0, borders, 82);
 
 
-	App->physics->CreateCircle(217, 198, 25, false);
-	App->physics->CreateCircle(183, 138, 25, false);
-	App->physics->CreateCircle(257, 121, 25, false);
+	circle_01 = App->physics->CreateCircle(217, 198, 25, false);
+	circle_01->body->GetFixtureList()->SetRestitution(1.f);
+	circle_02 = App->physics->CreateCircle(183, 138, 25, false);
+	circle_02->body->GetFixtureList()->SetRestitution(1.f);
+	circle_03 = App->physics->CreateCircle(257, 121, 25, false);
+	circle_03->body->GetFixtureList()->SetRestitution(1.f);
 	//Plunger
 
 
@@ -622,6 +625,7 @@ void ModuleSceneIntro::CreateBall()
 {
 	plunger->body->SetActive(true);
 	ball = App->physics->CreateCircle(340, 390, 7, true);
+	ball->body->GetFixtureList()->SetRestitution(0.5f);
 
 
 	circles.add(ball);

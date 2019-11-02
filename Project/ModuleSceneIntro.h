@@ -61,6 +61,10 @@ public:
 	PhysBody* triangle_left = nullptr;
 	PhysBody* triangle_right = nullptr;
 
+	PhysBody* circle_01 = nullptr;
+	PhysBody* circle_02 = nullptr;
+	PhysBody* circle_03 = nullptr;
+
 	PhysBody* box_bumper_left = nullptr;
 	PhysBody* box_bumper_right = nullptr;
 	PhysBody* box_bumper_top = nullptr;
