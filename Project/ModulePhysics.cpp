@@ -55,6 +55,8 @@ bool ModulePhysics::Start()
 	//COMMENTED: BIG BALL
 	//big_ball->CreateFixture(&fixture);
 
+	
+
 	return true;
 }
 
@@ -94,14 +96,20 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool player_ball
 		body.type = b2_staticBody;
 	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-
+	body.linearDamping =0.1f;
+	
 	b2Body* b = world->CreateBody(&body);
 
 	b2CircleShape shape;
 	shape.m_radius = PIXEL_TO_METERS(radius);
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	fixture.density = 0.2f;
+	fixture.density = 1.0f;
+	fixture.friction = 0.1f;
+
+	
+	b->ResetMassData();
+	
 
 	b->CreateFixture(&fixture);
 
@@ -205,10 +213,15 @@ PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radius, bool playe
 	return nullptr;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size,bool dynamic)
 {
 	b2BodyDef body;
-	body.type = b2_staticBody;
+	if (!dynamic) {
+		body.type = b2_staticBody;
+	}
+	else {
+		body.type = b2_dynamicBody;
+	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -330,13 +343,37 @@ update_status ModulePhysics::PostUpdate()
 				}
 				break;
 			}
-
 			// TODO 1: If mouse button 1 is pressed ...
-			// App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN
-			// test if the current body contains mouse position
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
+				if (b->GetFixtureList()->TestPoint({ PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()) })) {
+					body_clicked = b;
+
+					b2MouseJointDef def;
+					def.bodyA = ground;
+					def.bodyB = body_clicked;
+					def.target = { PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()) };
+					def.dampingRatio = 0.5f;
+					def.frequencyHz = 2.0f;
+					def.maxForce = 100.0f * body_clicked->GetMass();
+					mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
+
+				}
+			}
 		}
 	}
-
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && mouse_joint) {
+		mouse_joint->SetTarget({ PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()) });
+		App->renderer->DrawLine(
+			METERS_TO_PIXELS(mouse_joint->GetAnchorB().x),
+			METERS_TO_PIXELS(mouse_joint->GetAnchorB().y),
+			METERS_TO_PIXELS(mouse_joint->GetTarget().x),
+			METERS_TO_PIXELS(mouse_joint->GetTarget().y),
+			255, 0, 0, 255);
+	}
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP && mouse_joint) {
+		world->DestroyJoint(mouse_joint);
+		mouse_joint = nullptr;
+	}
 	// If a body was selected we will attach a mouse joint to it
 	// so we can pull it around
 	// TODO 2: If a body was selected, create a mouse joint
