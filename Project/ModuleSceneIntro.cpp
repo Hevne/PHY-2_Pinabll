@@ -32,8 +32,13 @@ bool ModuleSceneIntro::Start()
 	replay = { 282,228,49, 9 };
 	exit_game = { 282,208,70, 9 };
 
+	arrow = { 258,4,6, 12 };
+
 	play_background = { 461,273, 142,32 };
 	play_highlight  = { 461,316, 142,32 };
+
+	small_background = { 140,317, 136,26 };
+	small_highlight  = { 313,272, 136,26 };
 
 
 
@@ -144,9 +149,11 @@ bool ModuleSceneIntro::Start()
 
 	//UI Buttons
 
-	play_button = App->physics->CreateRectangle(play_background.x, play_background.y, play_background.w, play_background.h, false);
-	replay_button = App->physics->CreateRectangle(replay.x, replay.y, replay.w, replay.h, false);
-	exit_button = App->physics->CreateRectangle(exit_game.x, exit_game.y, exit_game.w, exit_game.h, false);
+	play_button = App->physics->CreateRectangle(400 + play_background.w * 0.5f, 460 + play_background.h * 0.5f, play_background.w, play_background.h, false);
+	play_button->body->SetAwake(false);
+
+	replay_button = App->physics->CreateRectangle(400 + small_background.w * 0.5f, +small_background.h * 0.5f, +small_background.w, +small_background.h, false);
+	exit_button = App->physics->CreateRectangle(400 + small_background.w * 0.5f, 460 + +small_background.h * 0.5f, +small_background.w, +small_background.h, false);
 
 	return ret;
 }
@@ -162,6 +169,9 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
+	if (play_button->body->IsAwake()) {
+		LOG("IM AWAKE");
+	}
 	LOG("MOUSE X: %i", App->input->GetMouseX());
 	LOG("MOUSE Y: %i", App->input->GetMouseY());
 
@@ -281,9 +291,17 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	//DRAW UI
-	App->renderer->Blit(spritesheet, 400, 460, &play_background);
-	App->renderer->Blit(spritesheet, 450, 468, &play);
-
+	if (play_button->isActive) {
+		App->renderer->Blit(spritesheet, 400, 460, &play_background);
+		if (play_button->Contains(App->input->GetMouseX(), App->input->GetMouseY())) {
+			App->renderer->Blit(spritesheet, 400, 460, &play_highlight);
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
+				play_button->isActive = false;
+			}
+		}
+		App->renderer->Blit(spritesheet, 445, 468, &play);
+		App->renderer->Blit(spritesheet, 508, 470, &arrow);
+	}
 	return UPDATE_CONTINUE;
 }
 

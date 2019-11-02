@@ -352,7 +352,7 @@ update_status ModulePhysics::PostUpdate()
 				break;
 			}
 			// TODO 1: If mouse button 1 is pressed ...
-			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && b != App->scene_intro->play_button->body) {
 				if (b->GetFixtureList()->TestPoint({ PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()) })) {
 					body_clicked = b;
 
