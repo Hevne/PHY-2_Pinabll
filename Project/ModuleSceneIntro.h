@@ -47,6 +47,9 @@ public:
 	PhysBody* replay_button = nullptr;
 	PhysBody* exit_button = nullptr;
 
+	int timer = 0;
+	bool startTimer = false;
+
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;

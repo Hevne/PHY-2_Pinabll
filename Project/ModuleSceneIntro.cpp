@@ -152,8 +152,14 @@ bool ModuleSceneIntro::Start()
 	play_button = App->physics->CreateRectangle(400 + play_background.w * 0.5f, 460 + play_background.h * 0.5f, play_background.w, play_background.h, false);
 	play_button->body->SetAwake(false);
 
-	replay_button = App->physics->CreateRectangle(400 + small_background.w * 0.5f, +small_background.h * 0.5f, +small_background.w, +small_background.h, false);
-	exit_button = App->physics->CreateRectangle(400 + small_background.w * 0.5f, 460 + +small_background.h * 0.5f, +small_background.w, +small_background.h, false);
+
+	replay_button = App->physics->CreateRectangle(410 + small_background.w * 0.5f, 450 +small_background.h * 0.5f, +small_background.w, +small_background.h, false);
+	replay_button->body->SetAwake(false);
+	replay_button->isActive = false;
+
+	exit_button = App->physics->CreateRectangle(410 + small_background.w * 0.5f, 477 + small_background.h * 0.5f, +small_background.w, +small_background.h, false);
+	exit_button->body->SetAwake(false);
+	exit_button->isActive = false;
 
 	return ret;
 }
@@ -291,17 +297,56 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	//DRAW UI
-	if (play_button->isActive) {
+	// PLAY BUTTON
+	if (play_button->isActive && !replay_button->isActive && !exit_button->isActive) {
 		App->renderer->Blit(spritesheet, 400, 460, &play_background);
 		if (play_button->Contains(App->input->GetMouseX(), App->input->GetMouseY())) {
 			App->renderer->Blit(spritesheet, 400, 460, &play_highlight);
 			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
-				play_button->isActive = false;
+				timer = 0;
+				startTimer = true;
 			}
 		}
 		App->renderer->Blit(spritesheet, 445, 468, &play);
 		App->renderer->Blit(spritesheet, 508, 470, &arrow);
+		if (timer < 5 && startTimer) {
+			timer++;
+		}
+		else if(startTimer){
+			play_button->isActive = false;
+			exit_button->isActive = true;
+		}
 	}
+
+	// REPLAY BUTTON
+	if (!play_button->isActive && replay_button->isActive && !exit_button->isActive) {
+		App->renderer->Blit(spritesheet, 410, 450, &small_background);
+		if (replay_button->Contains(App->input->GetMouseX(), App->input->GetMouseY())) {
+			App->renderer->Blit(spritesheet, 410, 450, &small_highlight);
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
+				replay_button->isActive = false;
+				exit_button->isActive = true;
+			}
+		}
+		App->renderer->Blit(spritesheet, 452, 457, &replay);
+		App->renderer->Blit(spritesheet, 530, 456, &arrow);
+	}	
+	
+	// EXIT BUTTON
+	if (!play_button->isActive && !replay_button->isActive && exit_button->isActive) {
+		App->renderer->Blit(spritesheet, 410, 477, &small_background);
+		if (exit_button->Contains(App->input->GetMouseX(), App->input->GetMouseY())) {
+			App->renderer->Blit(spritesheet, 410, 477, &small_highlight);
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
+				exit_button->isActive = false;
+				replay_button->isActive = true;
+			}
+		}
+		App->renderer->Blit(spritesheet, 442, 485, &exit_game);
+		App->renderer->Blit(spritesheet, 530, 483, &arrow);
+	}
+
+	
 	return UPDATE_CONTINUE;
 }
 
