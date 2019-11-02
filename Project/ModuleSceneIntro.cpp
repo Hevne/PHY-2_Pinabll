@@ -26,6 +26,7 @@ bool ModuleSceneIntro::Start()
 
 	left_bumper_rect = { 582,134,62,20 };
 	right_bumper_rect = { 505,135,63,19 };
+	top_bumper_rect = { 432,181,58,19 };
 
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
@@ -98,8 +99,8 @@ bool ModuleSceneIntro::Start()
 	fix2.shape = &shape2;
 	circle2->CreateFixture(&fix2);
 
-	int posx3 = 230;
-	int posy3 = 475;
+	int posx3 = 302;
+	int posy3 = 260;
 	int dim3 = 20;
 	b2BodyDef b3;
 	b3.type = b2_staticBody;
@@ -118,15 +119,14 @@ bool ModuleSceneIntro::Start()
 	box_bumper_left = App->physics->CreateRectangle(posx1 + dim1, posy1, 60, 18, true);
 	left_bumper_joint = App->physics->CreateRevolutionJoint(circle1, box_bumper_left->body, circle1->GetWorldCenter(), -0.05f, 0.15f, 75.f, 50.f);
 
-	//184, 487
+
 	//Right Bumper
 	box_bumper_right = App->physics->CreateRectangle(posx2 - dim2, posy2, 60, 18, true);
 	right_bumper_joint = App->physics->CreateRevolutionJoint(circle2, box_bumper_right->body, circle2->GetWorldCenter(),-0.15f, 0.05f, 75.f, -50.f);
 
 	//Top Bumper
-	//264, 282
-	box_bumper_top = App->physics->CreateRectangle(posx2 - dim2, posy2, 60, 18, true);
-	top_bumper_joint = App->physics->CreateRevolutionJoint(circle2, box_bumper_top->body, circle2->GetWorldCenter(),-0.15f, 0.05f, 75.f, -50.f);
+	box_bumper_top = App->physics->CreateRectangle(posx3 - dim3, posy3, 58, 10, true);
+	top_bumper_joint = App->physics->CreateRevolutionJoint(circle3, box_bumper_top->body, circle3->GetWorldCenter(),-0.15f, 0.05f, 75.f, -50.f);
 
 
 	return ret;
@@ -154,12 +154,17 @@ update_status ModuleSceneIntro::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) {
 		right_bumper_joint->SetMotorSpeed(50.f);
+		top_bumper_joint->SetMotorSpeed(50.f);
+		
 	}
 	if (left_bumper_joint->GetJointAngle() <= left_bumper_joint->GetLowerLimit()) {
 		left_bumper_joint->SetMotorSpeed(50.f);
 	}	
 	if (right_bumper_joint->GetJointAngle() >= right_bumper_joint->GetUpperLimit()) {
 		right_bumper_joint->SetMotorSpeed(-50.f);
+	}	
+	if (top_bumper_joint->GetJointAngle() >= top_bumper_joint->GetUpperLimit()) {
+		top_bumper_joint->SetMotorSpeed(-50.f);
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -220,7 +225,7 @@ update_status ModuleSceneIntro::Update()
 		int x, y;
 		c->data->GetPosition(x, y);
 		//Fill shapes with image
-		App->renderer->Blit(circle, x, y-3, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(circle, x-4, y-3, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
@@ -230,6 +235,9 @@ update_status ModuleSceneIntro::Update()
 
 		box_bumper_right->body->GetPosition();
 		App->renderer->Blit(spritesheet,175, 460, &right_bumper_rect, 1.0f,box_bumper_right->GetRotation(),60,0);
+
+		box_bumper_top->body->GetPosition();
+		App->renderer->Blit(spritesheet, 250, 250, &top_bumper_rect, 1.0f,box_bumper_top->GetRotation(),60,0);
 
 		
 	p2List_item<PhysBody*>* b = boxes.getFirst();

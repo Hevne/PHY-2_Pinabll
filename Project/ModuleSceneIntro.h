@@ -39,6 +39,7 @@ public:
 	SDL_Rect ball_rect;
 	SDL_Rect left_bumper_rect;
 	SDL_Rect right_bumper_rect;
+	SDL_Rect top_bumper_rect;
 
 
 	PhysBody* sensor_top_1 = nullptr;
