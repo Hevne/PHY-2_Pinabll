@@ -30,6 +30,7 @@ public:
 	void DrawLayers();
 	void LoadChains();
 	void NewScore(int inc);
+	void CreateBall();
 
 public:
 	p2List<PhysBody*> circles;
@@ -47,6 +48,7 @@ public:
 	PhysBody* sensor_mid_2 = nullptr;
 	PhysBody* sensor_bot_1 = nullptr;
 	PhysBody* sensor_bot_2 = nullptr;
+	PhysBody* sensor_lost = nullptr;
 	PhysBody* circle_sensor_1 = nullptr;
 	PhysBody* circle_sensor_2 = nullptr;
 	PhysBody* circle_sensor_3 = nullptr;
@@ -77,13 +79,21 @@ public:
 	p2List<Sprite> layer2;
 	p2List<Sprite> layer3;
 
-	uint bonus_fx;
+	uint hit_fx;
+	uint plunger_fx;
+	uint lost_fx;
+
 	p2Point<int> ray;
 	bool ray_on;
-	int score = 0;
-	p2SString current_score = { "000" };
-	int plunger_x;
-	int plunger_y;
+
 	const char* text_score;
 	bool inc_score = true;
+	int score = 0;
+	p2SString current_score = { "000" };
+
+	int plunger_x;
+	int plunger_y;
+	
+
+	bool respawn = false;
 };

@@ -30,7 +30,10 @@ bool ModuleSceneIntro::Start()
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	spritesheet = App->textures->Load("pinball/sprite_sheet.png");
-	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	plunger_fx = App->audio->LoadFx("audio/fx/rebound.wav");
+	hit_fx = App->audio->LoadFx("audio/fx/hit.wav");
+	lost_fx = App->audio->LoadFx("audio/fx/lost.wav");
+	App->audio->PlayMusic("audio/music/loop.ogg");
 
 	App->fonts->Load("fonts/score_font14h.png", "0123456789", 1, 11, 14, 10);
 	
@@ -45,6 +48,7 @@ bool ModuleSceneIntro::Start()
 	sensor_mid_2 = App->physics->CreateRectangleSensor(274, 217, 14, 12);
 	sensor_bot_1 = App->physics->CreateRectangleSensor(290, 333, 14, 12);
 	sensor_bot_2 = App->physics->CreateRectangleSensor(274, 317, 14, 12);
+	sensor_lost = App->physics->CreateRectangleSensor(190, 530, 200, 10);
 	//CIRCLE SENSOR
 	circle_sensor_1= App->physics->CreateCircleSensor(217, 198, 26, false);
 	circle_sensor_2= App->physics->CreateCircleSensor(183, 138, 26, false);
@@ -143,15 +147,11 @@ update_status ModuleSceneIntro::Update()
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7,true));
 		circles.getLast()->data->listener = this;
 	}
-	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN || respawn)
 	{
 		//COMMENTED: CREATE BALL
-		plunger->body->SetActive(true);
-		ball = App->physics->CreateCircle(340,390, 7,true);
-
-		
-		circles.add(ball);
-		circles.getLast()->data->listener = this;
+		CreateBall();
+		respawn = false;
 	}
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT && plunger->body->IsActive())
 	{
@@ -163,6 +163,7 @@ update_status ModuleSceneIntro::Update()
 	}
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP && plunger->body->IsActive())
 	{
+		App->audio->PlayFx(plunger_fx);
 		plunger_y = 468;
 		plunger_x = 344;
 		ball->body->ApplyForce({ 0,-80 }, { ball->body->GetLocalCenter() }, true);
@@ -249,10 +250,18 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	//Audio effect
 	//App->audio->PlayFx(bonus_fx);
-
 	if (bodyB == left_bumper || bodyB == right_bumper || bodyB == top_bumper) {
-	
-		App->audio->PlayFx(bonus_fx);
+
+		//App->audio->PlayFx(hit_fx);
+	}
+	if (bodyB == circle_sensor_1 || bodyB == circle_sensor_2 || bodyB == circle_sensor_3) {
+
+		App->audio->PlayFx(hit_fx);
+	}
+	if (bodyB == sensor_lost)
+	{
+		App->audio->PlayFx(lost_fx);
+		respawn = true;
 	}
 	/*if(bodyA)
 	{
@@ -552,5 +561,16 @@ void ModuleSceneIntro::NewScore(int inc)
 	}
 	current_score = p2SString("%d", score);
 }
+
+void ModuleSceneIntro::CreateBall()
+{
+	plunger->body->SetActive(true);
+	ball = App->physics->CreateCircle(340, 390, 7, true);
+
+
+	circles.add(ball);
+	circles.getLast()->data->listener = this;
+}
+
 
 
