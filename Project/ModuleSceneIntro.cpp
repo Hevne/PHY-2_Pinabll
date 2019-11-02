@@ -148,7 +148,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		plunger_y = 468;
 		plunger_x = 344;
-		if(ball != nullptr)
+		if(ball != nullptr && plunger->body->IsActive())
 		ball->body->ApplyForce({ 0,-80 }, { ball->body->GetLocalCenter() }, true);
 		plunger->body->SetActive(false);
 		plunger->body->SetTransform({ PIXEL_TO_METERS(plunger_x), PIXEL_TO_METERS(plunger_y) }, NULL);
