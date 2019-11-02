@@ -69,11 +69,6 @@ update_status ModulePhysics::PreUpdate()
 	{
 		if(c->GetFixtureA()->IsSensor() && c->IsTouching())
 		{
-			if (App->scene_intro->inc_score == true)
-			{
-				App->scene_intro->NewScore(10);
-				App->scene_intro->inc_score = false;
-			}
 			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			PhysBody* pb2 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			if(pb1 && pb2 && pb1->listener)

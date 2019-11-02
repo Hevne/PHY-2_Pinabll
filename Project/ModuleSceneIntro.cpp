@@ -37,6 +37,10 @@ bool ModuleSceneIntro::Start()
 	plunger_fx = App->audio->LoadFx("audio/fx/rebound.wav");
 	hit_fx = App->audio->LoadFx("audio/fx/hit.wav");
 	lost_fx = App->audio->LoadFx("audio/fx/lost.wav");
+	sensor_rect_fx = App->audio->LoadFx("audio/fx/sensor_rect.wav");
+	combo_fx = App->audio->LoadFx("audio/fx/bonus.wav");
+	triangle_fx = App->audio->LoadFx("audio/fx/triangle.wav");
+	respawn_fx = App->audio->LoadFx("audio/fx/respawn.wav");
 	App->audio->PlayMusic("audio/music/loop.ogg");
 
 	App->fonts->Load("fonts/score_font14h.png", "0123456789", 1, 11, 14, 10);
@@ -174,14 +178,9 @@ update_status ModuleSceneIntro::Update()
 		ray.y = App->input->GetMouseY();
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	{
-		//COMMENTED: CREATE BALL
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7,true));
-		circles.getLast()->data->listener = this;
-	}
 	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN || respawn)
 	{
+		App->audio->PlayFx(respawn_fx);
 		//COMMENTED: CREATE BALL
 		CreateBall();
 		respawn = false;
@@ -218,6 +217,7 @@ update_status ModuleSceneIntro::Update()
 	fVector normal(0.0f, 0.0f);
 
 	// All draw functions ------------------------------------------------------
+<<<<<<< HEAD
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
 	while (c != NULL)
@@ -229,6 +229,8 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 
+=======
+>>>>>>> de024702ea922d4630f85f1f6de23fe2cc5b3f4c
 
 		box_bumper_left->body->GetPosition();
 		App->renderer->Blit(spritesheet, 118-8, 460, &left_bumper_rect, 1.0f,box_bumper_left->GetRotation(),0,0);
@@ -236,10 +238,13 @@ update_status ModuleSceneIntro::Update()
 		box_bumper_right->body->GetPosition();
 		App->renderer->Blit(spritesheet,175, 460, &right_bumper_rect, 1.0f,box_bumper_right->GetRotation(),60,0);
 
+<<<<<<< HEAD
 		box_bumper_top->body->GetPosition();
 		App->renderer->Blit(spritesheet, 250, 250, &top_bumper_rect, 1.0f,box_bumper_top->GetRotation(),60,0);
 
 		
+=======
+>>>>>>> de024702ea922d4630f85f1f6de23fe2cc5b3f4c
 	p2List_item<PhysBody*>* b = boxes.getFirst();
 	while(b != NULL)
 	{
@@ -278,14 +283,27 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	int x, y;
 
-	//Audio effect
-	//App->audio->PlayFx(bonus_fx);
-	if (bodyB == left_bumper || bodyB == right_bumper || bodyB == top_bumper) {
 
-		//App->audio->PlayFx(hit_fx);
+	if (bodyB == triangle_left || bodyB == triangle_right) {
+
+		App->audio->PlayFx(triangle_fx);
+	}
+	if (bodyB == sensor_top_1 || bodyB == sensor_top_2 || bodyB == sensor_top_3 || bodyB == sensor_mid_1 || bodyB == sensor_mid_2 || bodyB == sensor_bot_1 || bodyB == sensor_bot_2) {
+
+		if (App->scene_intro->inc_score == true)
+		{
+			App->scene_intro->NewScore(500);
+			App->scene_intro->inc_score = false;
+		}
+		App->audio->PlayFx(sensor_rect_fx);
 	}
 	if (bodyB == circle_sensor_1 || bodyB == circle_sensor_2 || bodyB == circle_sensor_3) {
 
+		if (App->scene_intro->inc_score == true)
+		{
+			App->scene_intro->NewScore(500);
+			App->scene_intro->inc_score = false;
+		}
 		App->audio->PlayFx(hit_fx);
 	}
 	if (bodyB == sensor_lost)
@@ -293,6 +311,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		App->audio->PlayFx(lost_fx);
 		respawn = true;
 	}
+
 	/*if(bodyA)
 	{
 		bodyA->GetPosition(x, y);
@@ -346,6 +365,17 @@ void ModuleSceneIntro::DrawLayers()
 	for (int i = 0; i < layer3.count(); i++)
 	{
 		App->renderer->Blit(spritesheet, layer3[i].pos_x, layer3[i].pos_y, &layer3[i].rect, 0.f);
+	}
+
+	p2List_item<PhysBody*>* c = circles.getFirst();
+
+	while (c != NULL)
+	{
+		int x, y;
+		c->data->GetPosition(x, y);
+		//Fill shapes with image
+		App->renderer->Blit(circle, x, y - 3, NULL, 1.0f, c->data->GetRotation());
+		c = c->next;
 	}
 
 	//Mid Layer
@@ -419,7 +449,8 @@ void ModuleSceneIntro::LoadChains()
 	267, 396
 	};
 	triangle_right  = App->physics->CreateChain(1, 0, triangle_shape, 16);
-	triangle_right->body->GetFixtureList()->SetRestitution(1.0f);
+	triangle_right->body->GetFixtureList()->SetRestitution(1.5f);
+
 	int triangle_shape_left[14] = {
 	78, 368,
 	83, 362,
@@ -430,7 +461,8 @@ void ModuleSceneIntro::LoadChains()
 	76, 421
 	};
 	triangle_left = App->physics->CreateChain(2, 0, triangle_shape_left, 14);
-	triangle_left->body->GetFixtureList()->SetRestitution(1.0f);
+	triangle_left->body->GetFixtureList()->SetRestitution(1.5f);
+
 	int shape_at_right[16] = {
 	235, 461,
 	244, 475,
