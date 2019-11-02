@@ -58,11 +58,12 @@ public:
 	PhysBody* triangle_left = nullptr;
 	PhysBody* triangle_right = nullptr;
 
-	PhysBody* box_bumper = nullptr;
+	PhysBody* box_bumper_left = nullptr;
+	PhysBody* box_bumper_right = nullptr;
 	PhysBody* box_plunger = nullptr;
 
-	PhysBody* left_bumper_circle_joint = nullptr;
 	b2RevoluteJoint* left_bumper_joint = nullptr;
+	b2RevoluteJoint* right_bumper_joint = nullptr;
 	
 	bool sensed;
 
