@@ -368,7 +368,7 @@ void ModuleSceneIntro::DrawLayers()
 		int x, y;
 		c->data->GetPosition(x, y);
 		//Fill shapes with image
-		App->renderer->Blit(circle, x, y - 3, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(circle, x-4, y - 3, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
 
