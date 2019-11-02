@@ -84,6 +84,10 @@ public:
 	uint hit_fx;
 	uint plunger_fx;
 	uint lost_fx;
+	uint sensor_rect_fx;
+	uint respawn_fx;
+	uint combo_fx;
+	uint triangle_fx;
 
 	p2Point<int> ray;
 	bool ray_on;
