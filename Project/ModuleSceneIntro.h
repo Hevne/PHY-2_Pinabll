@@ -33,6 +33,20 @@ public:
 	void CreateBall();
 
 public:
+	//UI Buttons
+	SDL_Rect play; 
+	SDL_Rect play_highlight; 
+	SDL_Rect play_background; 
+	SDL_Rect replay;
+	SDL_Rect exit_game;
+	SDL_Rect small_highlight;
+	SDL_Rect small_background;
+	SDL_Rect arrow;
+
+	PhysBody* play_button = nullptr;
+	PhysBody* replay_button = nullptr;
+	PhysBody* exit_button = nullptr;
+
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;

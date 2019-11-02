@@ -28,6 +28,15 @@ bool ModuleSceneIntro::Start()
 	right_bumper_rect = { 505,135,63,19 };
 	top_bumper_rect = { 432,181,58,19 };
 
+	play = { 198,207,49, 14 };
+	replay = { 282,228,49, 9 };
+	exit_game = { 282,208,70, 9 };
+
+	play_background = { 461,273, 142,32 };
+	play_highlight  = { 461,316, 142,32 };
+
+
+
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	circle = App->textures->Load("pinball/wheel.png");
@@ -132,6 +141,12 @@ bool ModuleSceneIntro::Start()
 	box_bumper_top = App->physics->CreateRectangle(posx3 - dim3, posy3, 58, 10, true);
 	top_bumper_joint = App->physics->CreateRevolutionJoint(circle3, box_bumper_top->body, circle3->GetWorldCenter(),-0.15f, 0.05f, 75.f, -50.f);
 
+
+	//UI Buttons
+
+	play_button = App->physics->CreateRectangle(play_background.x, play_background.y, play_background.w, play_background.h, false);
+	replay_button = App->physics->CreateRectangle(replay.x, replay.y, replay.w, replay.h, false);
+	exit_button = App->physics->CreateRectangle(exit_game.x, exit_game.y, exit_game.w, exit_game.h, false);
 
 	return ret;
 }
@@ -259,10 +274,16 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
 
+	//Draw Wheel animations
 	if (circle_active) {
 		SDL_Rect rect = { 286,92,38,31 };
 		App->renderer->Blit(spritesheet, (int)circle_active->GetPosition().x -  18, (int)circle_active->GetPosition().y- 20, &rect);
 	}
+
+	//DRAW UI
+	App->renderer->Blit(spritesheet, 400, 460, &play_background);
+	App->renderer->Blit(spritesheet, 450, 468, &play);
+
 	return UPDATE_CONTINUE;
 }
 
