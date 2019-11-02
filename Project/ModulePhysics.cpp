@@ -81,6 +81,7 @@ update_status ModulePhysics::PreUpdate()
 
 PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool player_ball)
 {
+	
 	b2BodyDef body;
 	if (player_ball == true)
 	{
@@ -110,6 +111,8 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool player_ball
 	b->CreateFixture(&fixture);
 
 	PhysBody* pbody = new PhysBody();
+	pbody->x = x;
+	pbody->y = y;
 	pbody->body = b;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = radius;
@@ -142,9 +145,12 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height,boo
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->x = x;
+	pbody->y = y;
 	b->SetUserData(pbody);
 	pbody->width = width * 0.5f;
 	pbody->height = height * 0.5f;
+
 
 	return pbody;
 }
@@ -169,6 +175,8 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->x = x;
+	pbody->y = y;
 	b->SetUserData(pbody);
 	pbody->width = width;
 	pbody->height = height;
@@ -202,6 +210,8 @@ PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radius, bool playe
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->x = x;
+	pbody->y = y;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = radius;
 
@@ -242,6 +252,8 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size,bool dy
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->x = x;
+	pbody->y = y;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
 

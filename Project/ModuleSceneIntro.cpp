@@ -258,13 +258,15 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
 
-
+	if (circle_active) {
+		SDL_Rect rect = { 286,92,38,31 };
+		App->renderer->Blit(spritesheet, (int)circle_active->GetPosition().x -  18, (int)circle_active->GetPosition().y- 20, &rect);
+	}
 	return UPDATE_CONTINUE;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	int x, y;
 
 
 	if (bodyB == triangle_left || bodyB == triangle_right) {
@@ -293,6 +295,14 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	{
 		App->audio->PlayFx(lost_fx);
 		respawn = true;
+	}
+
+	if (bodyB == circle_01 || bodyB == circle_02 || bodyB == circle_03) {
+		circle_active = bodyB;
+
+	}
+	else {
+		circle_active = nullptr;
 	}
 
 	/*if(bodyA)
@@ -607,6 +617,7 @@ void ModuleSceneIntro::NewScore(int inc)
 	{
 		score += inc;
 	}
+
 	current_score = p2SString("%d", score);
 }
 
@@ -614,7 +625,7 @@ void ModuleSceneIntro::CreateBall()
 {
 	plunger->body->SetActive(true);
 	ball = App->physics->CreateCircle(340, 390, 7, true);
-	ball->body->GetFixtureList()->SetRestitution(0.5f);
+	ball->body->GetFixtureList()->SetRestitution(0.2f);
 
 
 	circles.add(ball);
