@@ -90,6 +90,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, bool player_ball
 	if (player_ball == true)
 	{
 		body.type = b2_dynamicBody;
+		body.bullet = true;
 	}
 	else
 	{

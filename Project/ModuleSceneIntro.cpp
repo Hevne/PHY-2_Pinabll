@@ -25,7 +25,7 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
-	left_bumper_rect = { 584,125,57,35 };
+	left_bumper_rect = { 582,134,62,20 };
 	circle = App->textures->Load("pinball/wheel.png"); 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
@@ -72,22 +72,34 @@ bool ModuleSceneIntro::Start()
 
 	b2FixtureDef fix;
 	fix.shape = &shape1;
-	circle->CreateFixture(&fix);
+	circle->CreateFixture(&fix);	
+	
 
-	box_bumper = App->physics->CreateRectangle(posx + dim, posy, 60, 18,true);
+	int posx1 = 230;
+	int posy1 = 475;
+	int dim1 = 20;
+	b2BodyDef b1;
+	b1.type = b2_staticBody;
+	b1.position.Set(PIXEL_TO_METERS(posx1), PIXEL_TO_METERS(posy1));
 
-	b2RevoluteJointDef jointDef;
-	jointDef.Initialize(circle, box_bumper->body, circle->GetWorldCenter());
-	jointDef.lowerAngle = -0.05f * b2_pi; // -90 degrees
-	jointDef.upperAngle = 0.15f * b2_pi; // 45 degrees
-	jointDef.enableLimit = true;
-	jointDef.maxMotorTorque = 150.0f;
-	jointDef.motorSpeed =50.f;
-	jointDef.enableMotor = true;
-	left_bumper_joint = (b2RevoluteJoint*)App->physics->world->CreateJoint(&jointDef);
+	b2Body* circle1 = App->physics->world->CreateBody(&b1);
 
-	//left_bumper_circle_joint = App->physics->CreateCircle(left_bumper->body->GetPosition().x, left_bumper->body->GetPosition().x, 20,false);
-	//left_bumper_joint = App->physics->CreateRevolutionJoint(left_bumper_circle_joint->body, left_bumper->body, left_bumper_circle_joint->body->GetPosition(), -0.1f, 0.1f, 3000.f, 100.f);
+	b2CircleShape shape2;
+	shape2.m_radius = PIXEL_TO_METERS(dim1) * 0.5f;
+
+	b2FixtureDef fix1;
+	fix1.shape = &shape2;
+	circle1->CreateFixture(&fix1);
+
+	//184, 487
+	//Right Bumper
+	box_bumper_right = App->physics->CreateRectangle(posx1 - dim1-5 , posy1, 60, 18,true);
+	right_bumper_joint = App->physics->CreateRevolutionJoint(circle1, box_bumper_right->body, circle1->GetWorldCenter(), 0.2f, -0.15f, 75.f,-50);
+
+	//Left Bumper
+	box_bumper_left = App->physics->CreateRectangle(posx + dim, posy, 60, 18,true);
+	left_bumper_joint = App->physics->CreateRevolutionJoint(circle, box_bumper_left->body, circle->GetWorldCenter(), -0.05f, 0.15f, 75.f, 50);
+
 
 	return ret;
 }
@@ -113,6 +125,9 @@ update_status ModuleSceneIntro::Update()
 	}
 	if (left_bumper_joint->GetJointAngle() <= left_bumper_joint->GetLowerLimit()) {
 		left_bumper_joint->SetMotorSpeed(50.f);
+	}	
+	if (right_bumper_joint->GetJointAngle() <= right_bumper_joint->GetLowerLimit()) {
+		right_bumper_joint->SetMotorSpeed(-50.f);
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -181,8 +196,8 @@ update_status ModuleSceneIntro::Update()
 	}
 
 
-		box_bumper->body->GetPosition();
-		App->renderer->Blit(spritesheet, 118- 22, 475, &left_bumper_rect, 1.0f,box_bumper->GetRotation(),-20,10);
+		box_bumper_left->body->GetPosition();
+		App->renderer->Blit(spritesheet, 118-8, 460, &left_bumper_rect, 1.0f,box_bumper_left->GetRotation(),0,0);
 
 		
 	p2List_item<PhysBody*>* b = boxes.getFirst();
@@ -316,7 +331,7 @@ void ModuleSceneIntro::DrawLayers()
 	
 	text_score = current_score.GetString();
 	App->fonts->BlitText(426, 313, 1, text_score);
-	App->renderer->Blit(spritesheet, 105, 465,  &left_bumper_rect);
+
 }
 
 void ModuleSceneIntro::LoadChains()
@@ -329,7 +344,7 @@ void ModuleSceneIntro::LoadChains()
 	240, 472,
 	232, 464
 	};
-	right_bumper = App->physics->CreateChain(1, 0, bumper_right, 12);
+	//right_bumper = App->physics->CreateChain(1, 0, bumper_right, 12);
 
 	
 	int bumper_left[12] = {
