@@ -31,6 +31,10 @@ public:
 	void LoadChains();
 	void NewScore(int inc);
 	void CreateBall();
+	void ActivateSensors(PhysBody* BodyB);
+	void DrawActiveSensors();
+	void DrawActivePlates();
+	void CheckActiveSensors();
 
 public:
 	//UI Buttons
@@ -40,8 +44,12 @@ public:
 	SDL_Rect replay;
 	SDL_Rect exit_game;
 	SDL_Rect small_highlight;
+	SDL_Rect tube_highlight;
+	SDL_Rect triangle_ray_left;
+	SDL_Rect triangle_ray_right;
 	SDL_Rect small_background;
 	SDL_Rect arrow;
+	SDL_Rect car;
 
 	PhysBody* play_button = nullptr;
 	PhysBody* replay_button = nullptr;
@@ -66,6 +74,11 @@ public:
 	PhysBody* sensor_mid_2 = nullptr;
 	PhysBody* sensor_bot_1 = nullptr;
 	PhysBody* sensor_bot_2 = nullptr;
+	PhysBody* sensor_top_side_1 = nullptr;
+	PhysBody* sensor_top_side_2 = nullptr;
+	PhysBody* sensor_top_side_3 = nullptr;
+	PhysBody* sensor_car = nullptr;
+	PhysBody* sensor_tube = nullptr;
 	PhysBody* sensor_lost = nullptr;
 	PhysBody* circle_sensor_1 = nullptr;
 	PhysBody* circle_sensor_2 = nullptr;
@@ -113,6 +126,7 @@ public:
 	uint combo_fx;
 	uint triangle_fx;
 	uint flip_fx;
+	uint tube_fx;
 
 	p2Point<int> ray;
 	bool ray_on;
@@ -135,8 +149,39 @@ public:
 	int plunger_y;
 
 	
-	uint lifes = 1;
+	uint lifes = 5;
 	bool on_game = false;
 	bool show_controls = false;
 	bool respawn = false;
+
+	//Sensors
+	bool sensor_top_1_active = false;
+	bool sensor_top_2_active = false;
+	bool sensor_top_3_active = false;
+	bool sensor_mid_1_active = false;
+	bool sensor_mid_2_active = false;
+	bool sensor_bot_1_active = false;
+	bool sensor_bot_2_active = false;
+
+	//Plates
+	bool plate_mid_1_active = true;
+	bool plate_mid_2_active = true;
+	bool plate_bot_1_active = true;
+	bool plate_bot_2_active = true;
+	bool plate_top_1_active = true;
+	bool plate_top_2_active = true;
+	bool plate_top_3_active = true;
+
+	bool tube_highlight_active = false;
+	uint highlight_timer = 0;
+	bool tube_sound = true;
+
+	bool triangle_ray_left_active = false;
+	bool triangle_ray_right_active = false;
+	uint triangleray_timer_left = 0;
+	uint triangleray_timer_right = 0;
+
+	bool spritechange = false;
+	bool spritechange_active = false;
+	uint spritechange_timer = 0;
 };
