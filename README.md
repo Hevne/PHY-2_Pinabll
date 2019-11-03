@@ -25,5 +25,9 @@ Some of the software we used for this assignment is: SFW Decompiler, Visual Stud
 
 Beyond the differences about numbers in code the only feature we couldn't be in time to implement was 
 the one where after hitting 5 fences on the left side of the bumpers, a wheel starts spinning and the player unlocks the door to some kind
-of slider and an animation where car rides through it pops up.
+of slider and an animation where car rides through it pops up. <br>
+
+For the high score and last score we used the score plates for the hypotetic 4 players since this game accepts more than one player.
+We coded it in a way in which the highest score appears at the top of the 4 plates, the current score at the bottom of the 4 plates
+and in between these two the higher scores which are not high enough to surpass the highest.
 
