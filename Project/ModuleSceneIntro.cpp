@@ -46,7 +46,6 @@ bool ModuleSceneIntro::Start()
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	circle = App->textures->Load("pinball/wheel.png");
 	box = App->textures->Load("pinball/crate.png");
-	rick = App->textures->Load("pinball/rick_head.png");
 	spritesheet = App->textures->Load("pinball/sprite_sheet.png");
 	plunger_fx = App->audio->LoadFx("audio/fx/rebound.wav");
 	hit_fx = App->audio->LoadFx("audio/fx/hit.wav");
@@ -55,10 +54,10 @@ bool ModuleSceneIntro::Start()
 	combo_fx = App->audio->LoadFx("audio/fx/bonus.wav");
 	triangle_fx = App->audio->LoadFx("audio/fx/triangle.wav");
 	respawn_fx = App->audio->LoadFx("audio/fx/respawn.wav");
+	flip_fx = App->audio->LoadFx("audio/fx/flip.wav");
 	App->audio->PlayMusic("audio/music/loop.ogg");
 
 	App->fonts->Load("fonts/score_font14h.png", "0123456789", 1, 11, 14, 10);
-
 	LoadSprites();
 	LoadChains();
 
@@ -183,13 +182,15 @@ update_status ModuleSceneIntro::Update()
 
 	DrawLayers();
 	//BUMPERS CONTROLL
-	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_Z)== KEY_DOWN) {
 		left_bumper_joint->SetMotorSpeed(-50.f);
+		App->audio->PlayFx(flip_fx);
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
 		right_bumper_joint->SetMotorSpeed(50.f);
 		top_bumper_joint->SetMotorSpeed(50.f);
+		App->audio->PlayFx(flip_fx);
 
 	}
 	if (left_bumper_joint->GetJointAngle() <= left_bumper_joint->GetLowerLimit()) {
@@ -234,10 +235,7 @@ update_status ModuleSceneIntro::Update()
 		plunger->body->SetActive(false);
 		plunger->body->SetTransform({ PIXEL_TO_METERS(plunger_x), PIXEL_TO_METERS(plunger_y) }, NULL);
 		ball->body->GetFixtureList()->SetRestitution(0.3f);
-
-		//TODO eudald:  SENSOR to respawn ball, life counter, polish code
 	}
-
 
 	// Prepare for raycast ------------------------------------------------------
 
@@ -248,7 +246,7 @@ update_status ModuleSceneIntro::Update()
 
 	fVector normal(0.0f, 0.0f);
 
-	// All draw functions ------------------------------------------------------
+	// Bumpers draw functions ------------------------------------------------------
 
 		box_bumper_left->body->GetPosition();
 		App->renderer->Blit(spritesheet, 118-8, 460, &left_bumper_rect, 1.0f,box_bumper_left->GetRotation(),0,0);
@@ -305,6 +303,12 @@ update_status ModuleSceneIntro::Update()
 			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
 				timer = 0;
 				startTimer = true;
+				on_game = true;
+				App->audio->PlayFx(respawn_fx);
+				//COMMENTED: CREATE BALL
+				CreateBall();
+				respawn = false;
+				show_controls = true;
 			}
 		}
 		App->renderer->Blit(spritesheet, 445, 468, &play);
@@ -326,6 +330,12 @@ update_status ModuleSceneIntro::Update()
 			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
 				replay_button->isActive = false;
 				exit_button->isActive = true;
+				on_game = true;
+				App->audio->PlayFx(respawn_fx);
+				//COMMENTED: CREATE BALL
+				CreateBall();
+				App->audio->PlayFx(combo_fx);
+				show_controls = true;
 			}
 		}
 		App->renderer->Blit(spritesheet, 452, 457, &replay);
@@ -340,6 +350,11 @@ update_status ModuleSceneIntro::Update()
 			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
 				exit_button->isActive = false;
 				replay_button->isActive = true;
+				p2List_item<PhysBody*>* c = circles.getLast();
+				App->physics->world->DestroyBody(c->data->body);		
+				current_score = { "0,0,0" };
+				App->audio->PlayFx(combo_fx);
+				show_controls = false;
 			}
 		}
 		App->renderer->Blit(spritesheet, 442, 485, &exit_game);
@@ -358,8 +373,10 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 		App->audio->PlayFx(triangle_fx);
 	}
+
 	if (bodyB == sensor_top_1 || bodyB == sensor_top_2 || bodyB == sensor_top_3 || bodyB == sensor_mid_1 || bodyB == sensor_mid_2 || bodyB == sensor_bot_1 || bodyB == sensor_bot_2) {
 
+		//TODO EUDALD: DYNAMIC ANIMATONS AND ACTIVATE/DEACTIVATE BLITS IN FUNCTION OF SENSORS. SEE ORIGINAL GAME FOR REFERENCE. SFX.
 		if (App->scene_intro->inc_score == true)
 		{
 			App->scene_intro->NewScore(500);
@@ -367,6 +384,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		App->audio->PlayFx(sensor_rect_fx);
 	}
+
 	if (bodyB == circle_sensor_1 || bodyB == circle_sensor_2 || bodyB == circle_sensor_3) {
 
 		if (App->scene_intro->inc_score == true)
@@ -376,6 +394,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		App->audio->PlayFx(hit_fx);
 	}
+
 	if (bodyB == sensor_lost)
 	{
 		App->audio->PlayFx(lost_fx);
@@ -383,6 +402,32 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		if (lifes > 0)
 		{
 			respawn = true;
+		}
+		else
+		{
+			if (score > high_score)
+			{
+				medium_score = high_score;
+				mid_score = highest_score;
+				high_score = score;
+				highest_score = current_score;
+			}
+			else if (score > medium_score)
+			{
+				low_score = medium_score;
+				lowest_score = mid_score;
+				medium_score = score;
+				mid_score = current_score;
+
+			}
+			else if (score > low_score)
+			{
+				low_score = score;
+				lowest_score = current_score;
+			}
+			current_score = { "0,0,0" };
+			score = 0;
+			lifes = 1;
 		}
 	}
 
@@ -393,24 +438,13 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	else {
 		circle_active = nullptr;
 	}
-
-	/*if(bodyA)
-	{
-		bodyA->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
-	}
-
-	if(bodyB)
-	{
-		bodyB->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
-	}*/
 }
 
 void ModuleSceneIntro::LoadSprites()
 {
 	//First Layer
 	layer0.add({ "tube",{1093,259,313,394 }, 1, 5 });
+
 	//Fences left
 	layer0.add({ "fence_front_left1",{231,67,18,17 }, 53, 305 });
 	layer0.add({ "fence_front_left2",{231,67,18,17 }, 71, 295 });
@@ -442,6 +476,11 @@ void ModuleSceneIntro::LoadSprites()
 	layer1.add({ "light_top_2", { 168,97,29,28 }, 261, 304 });
 	layer1.add({ "map_front",{-2,356,362,515 }, 1, 5 });
 
+	//Controls layer
+	layer_instructions.add({ "ZM",{202,0,41,21},362,450 });
+	layer_instructions.add({ "Arrow" , { 157,0,21,21 }, 482, 450 });
+	layer_instructions.add({ "flippers", { 0,873,78,10 }, 402, 453 });
+	layer_instructions.add({ "plunger", { 0,887,74,10 }, 502, 453 });
 
 	//Back Layer
 	layer3.add({ "map_back",{-1,884,578,521 }, 0, -15 });
@@ -497,9 +536,25 @@ void ModuleSceneIntro::DrawLayers()
 		App->renderer->Blit(spritesheet, layer0[i].pos_x, layer0[i].pos_y, &layer0[i].rect, 0.f);
 	}
 
+	//controls
+	if (show_controls)
+	{
+		for (int i = 0; i < layer_instructions.count(); i++)
+		{
+			App->renderer->Blit(spritesheet, layer_instructions[i].pos_x, layer_instructions[i].pos_y, &layer_instructions[i].rect, 0.f);
+		}
+	}
 
-	text_score = current_score.GetString();
-	App->fonts->BlitText(426, 313, 1, text_score);
+	text_highest_score = highest_score.GetString();
+	text_mid_score = mid_score.GetString();
+	text_lowest_score = lowest_score.GetString();
+	text_current_score = current_score.GetString();
+
+	App->fonts->BlitText(426, 313, 1, text_highest_score);
+	App->fonts->BlitText(426, 345, 1, text_mid_score);
+	App->fonts->BlitText(426, 377, 1, text_lowest_score);
+	App->fonts->BlitText(426, 409, 1, text_current_score);
+
 
 }
 

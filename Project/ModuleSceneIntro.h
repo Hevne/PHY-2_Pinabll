@@ -103,6 +103,7 @@ public:
 	p2List<Sprite> layer1;
 	p2List<Sprite> layer2;
 	p2List<Sprite> layer3;
+	p2List<Sprite> layer_instructions;
 
 	uint hit_fx;
 	uint plunger_fx;
@@ -111,19 +112,31 @@ public:
 	uint respawn_fx;
 	uint combo_fx;
 	uint triangle_fx;
+	uint flip_fx;
 
 	p2Point<int> ray;
 	bool ray_on;
 
-	const char* text_score;
+	const char* text_current_score;
+	const char* text_highest_score;
+	const char* text_lowest_score;
+	const char* text_mid_score;
 	bool inc_score = true;
 	int score = 0;
+	int high_score = 0;
+	int medium_score = 0;
+	int low_score = 0;
 	p2SString current_score = { "000" };
+	p2SString highest_score = { "000" };
+	p2SString lowest_score = { "000" };
+	p2SString mid_score = { "000" };
 
 	int plunger_x;
 	int plunger_y;
+
 	
-	uint lifes = 4;
+	uint lifes = 1;
 	bool on_game = false;
+	bool show_controls = false;
 	bool respawn = false;
 };
